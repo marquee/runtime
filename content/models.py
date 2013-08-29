@@ -111,10 +111,14 @@ class _ContentObject(object):
         if len(args) > 0:
             if len(args) != 1:
                 raise TypeError('ContentObject constructors take at most 1 argument, got %s' % (len(args),))
-            if not hasattr(args[0], 'items'):
+            
+            first_arg = args[0]
+            if hasattr(first_arg, 'type'):
+                first_arg = first_arg.toDict()
+            elif not hasattr(first_arg, 'items'):
                 raise ValueError('arguments to ContentObject constructors must be dictionaries')
 
-            for name, value in args[0].items():
+            for name, value in first_arg.items():
                 if name == '_id':
                     name = 'id'
                 if not name in self.property_blacklist:
@@ -188,10 +192,7 @@ class _ContentObject(object):
 
         Returns a string JSON object.
         """
-        if 'for_owner' in kwargs:
-            for_owner = kwargs.pop('for_owner')
-        else:
-            for_owner = False
+        for_owner = kwargs.pop('for_owner', False)
         return json.dumps(self.toJSONSafe(for_owner=for_owner), **kwargs)
 
     @property

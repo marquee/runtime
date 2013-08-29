@@ -16,8 +16,13 @@ def page(slug):
         abort(404)
 
     # Choose template
+    template_name = "{0}.html".format(target_obj.role)
+
+    context = {
+        target_obj.role: target_obj
+    }
 
     return render_template(
-        'story.html',
-        slug=slug,
+        template_name,
+        **context
     )
