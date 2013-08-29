@@ -6,6 +6,7 @@ REQUIRED_ENV = [
     'CONTENT_API_TOKEN',
     'CONTENT_API_ROOT',
     'STATIC_URL',
+    'CACHE_SOFT_EXPIRY',
 ]
 
 if not set(REQUIRED_ENV).issubset(os.environ):
@@ -49,3 +50,5 @@ AWS_SECRET_ACCESS_KEY   = os.environ['AWS_SECRET_ACCESS_KEY']
 # Content API config
 CONTENT_API_TOKEN       = os.environ['CONTENT_API_TOKEN']
 CONTENT_API_ROOT        = os.environ['CONTENT_API_ROOT']
+
+CACHE_SOFT_EXPIRY       = int(os.environ['CACHE_SOFT_EXPIRY'])

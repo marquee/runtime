@@ -1,6 +1,8 @@
-from flask      import render_template, abort
-from .main      import app
-from .models    import data_loader
+from flask          import render_template, abort
+from .main          import app
+from .data_loader   import data_loader
+
+import template_helpers
 
 @app.route('/')
 def index():
