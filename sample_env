@@ -1,0 +1,14 @@
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+CONTENT_API_TOKEN=
+CONTENT_API_ROOT=marquee.com/content/
+DEBUG=True
+ENVIRONMENT=development
+ASSET_BUCKET=clients.marquee.by
+MEDIA_KEY_PREFIX=publicationname/media_dev/
+STATIC_KEY_PREFIX=publicationname/static_dev/
+MEDIA_URL=http://cdn.marquee.by/publicationname/media_dev/
+PROJECT_NAME=Publication Name
+REDIS_URL=redis://localhost:6379
+SECRET_KEY=some secret key
+STATIC_URL=/static/

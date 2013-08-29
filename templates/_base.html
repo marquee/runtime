@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block html_title %}{% endblock %}</title>
+        <meta name="description" content="{% include 'includes/meta_description.txt' ignore missing %}">
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="{{ static_url('screen.css') }}" type="text/css">
+    </head>
+    <body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
+
+        {% block content %}
+
+            <div id="site-header">
+                <a class="logo" href="{{ url_for('index') }}">Project Name</a>
+                <nav id="site-nav">
+                </nav>
+            </div>
+
+            <div id="view-content">
+                {% block view_content %}{% endblock %}
+            </div>
+
+            <footer id="site-footer">
+            </footer>
+
+            <script>
+                window.Params = {}
+                {% block view_params %}{% endblock %}
+            </script>
+
+            <script src="{{ static_url('libs/jquery-1.10.1.min.js') }}"></script>
+            <script src="{{ static_url('libs/underscore-min.js') }}"></script>
+            <script src="{{ static_url('libs/backbone-min.js') }}"></script>
+            {% raw %}<script>
+                _.templateSettings = {
+                    evaluate    : /\{%(.+?)%\}/g,
+                    interpolate : /\{\{(.+?)\}\}/g
+                }
+            </script>{% endraw %}
+
+            {% block extra_scripts %}{% endblock %}
+
+        {% endblock %}
+    </body>
+</html>

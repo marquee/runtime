@@ -1,0 +1,11 @@
+*.pyc
+*.swo
+*.swp
+*.swo
+.sass-cache/*
+.env
+.DS_Store
+polisbooks.db
+static/*
+node_modules/*
+aws_config.json
