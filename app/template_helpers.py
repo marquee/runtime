@@ -39,6 +39,20 @@ def to_item_size(count):
 app.jinja_env.filters['to_item_size'] = to_item_size
 
 
+from jinja2 import evalcontextfilter, Markup, escape
+@evalcontextfilter
+def render_block(eval_ctx, block):
+    result = u"<p>{0}</p>".format(block.content.replace('\n', '<br>'))
+    if eval_ctx.autoescape:
+        result = Markup(result)
+    return result
+app.jinja_env.filters['render_block'] = render_block
+
+
+
+
+
+
 from content.models import Container, Text, Image, Embed, instanceFromRaw
 
 def render_flatpage(post, link_title=False):
