@@ -28,13 +28,11 @@ class HasCoverContent(object):
     """
     Private: mixin that adds cover content accessors.
     """
-    def cover_image(self, size=640):
-        null = ''
+    def cover(self, size=640):
+        default = ''
 
-        try:
-            cover_content = self.cover_content['content']
-        except TypeError:
-            return null
+        if not hasattr(self, 'cover_content'):
+            return default
 
         asset = None
 
@@ -47,10 +45,10 @@ class HasCoverContent(object):
         elif size == 'original':
             asset = self.cover_content['content'].get('original', {})
 
-        if asset is not None:
-            return asset.get('url', null)
-        else:
-            return null
+        if asset:
+            return asset.get('url', default)
+
+        return default
 
 
 
