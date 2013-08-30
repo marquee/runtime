@@ -6,4 +6,8 @@
 
     No place like 127.0.0.1
 
+    {% for story in publication.stories().limit(20) %}
+        {{ story.title }}
+    {% endfor %}
+
 {% endblock %}

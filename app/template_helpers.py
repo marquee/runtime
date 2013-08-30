@@ -26,7 +26,17 @@ app.jinja_env.globals.update(media_url=media_url)
 
 
 
-
+# Goes with Formwork's .item- variants.
+def to_item_size(count):
+    size_map = {
+        1: 'full',
+        2: 'half',
+        3: 'third',
+        4: 'quarter',
+        5: 'fifth',
+    }
+    return size_map.get(count, 'full')
+app.jinja_env.filters['to_item_size'] = to_item_size
 
 
 from content.models import Container, Text, Image, Embed, instanceFromRaw

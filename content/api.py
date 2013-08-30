@@ -95,10 +95,11 @@ class APIQueryException(Exception): pass
 class APIQuery(object):
 
     def __init__(self, api, params):
-        self._api = api
-        self._params = params
-        self._constraints = {}
-        self._result = None
+        self._api           = api
+        self._params        = params
+        self._constraints   = {}
+        self._result        = None
+        self._output_map    = lambda x: x
 
     def _hasExecuted(self):
         return (not self._result is None)
@@ -126,7 +127,7 @@ class APIQuery(object):
             print self._params
             print self._constraints
             result = self._api.readList(self._params, constraints=self._constraints)
-            self._result = map(lambda x: instanceFromRaw(x), result)
+            self._result = map(lambda x: self._output_map(instanceFromRaw(x)), result)
         return self._result
 
     def __len__(self):
@@ -136,20 +137,26 @@ class APIQuery(object):
         return iter(self.execute())
 
     # TODO: support slicing, lazy offsets (needs to copy queryset)
-    def __getitem__(self, n):
-        return self.execute()[n]
+    def __getitem__(self, index):
+        return self.execute()[index]
 
-    def rewind(self):
+    def undo(self):
         self._result = None
         return self
 
+    def map(self, fn):
+        return map(fn, self.execute())
 
+    def mapOnExecute(self, fn):
+        self._output_map = fn
+        return self
 
 class ContentObjects(object):
+
     def __init__(self, api_token, api_root=DEFAULT_API_ROOT):
-        self._api = ContentAPIWrapper(api_token, api_root)
-        self.TOKEN = api_token
-        self.ROOT = api_root
+        self._api           = ContentAPIWrapper(api_token, api_root)
+        self.TOKEN          = api_token
+        self.ROOT           = api_root
 
     def fetch(self, object_id):
         obj = typeClassFromID(object_id)(id=object_id)

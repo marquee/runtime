@@ -4,16 +4,19 @@ from .data_loader   import data_loader
 
 import template_helpers
 
+from .models        import Publication
+
 @app.route('/')
 def index():
     return render_template(
         'index.html',
+        publication=Publication(),
     )
 
 @app.route('/<slug>/')
 def page(slug):
 
-    target_obj = data_loader.load(slug=slug)
+    target_obj = data_loader.load(slug)
     if not target_obj:
         abort(404)
 
