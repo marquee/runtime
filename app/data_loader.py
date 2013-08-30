@@ -82,8 +82,11 @@ class DataLoader(object):
         self._content       = content_backend
         self._cache         = cache_backend
 
-    def load(self, slug):
+    def load(self, slug, stale_after=None):
         target_object = None
+
+        if not stale_after:
+            stale_after = self._stale_after
 
         if self._cache:
             cached_object = self._cache.get(slug)
@@ -98,7 +101,7 @@ class DataLoader(object):
                 # Object was cached, so check if it has expired yet.
                 object_stored_at = datetime.fromtimestamp(int(cached_object['stored_at']))
 
-                if datetime.utcnow() - object_stored_at > self._stale_after:
+                if datetime.utcnow() - object_stored_at > _stale_after:
                     # It has expired, so try getting it from the API instead.
                     target_object = self._load_from_api(slug)
                 else:
