@@ -7,6 +7,7 @@ REQUIRED_ENV = [
     'CONTENT_API_ROOT',
     'STATIC_URL',
     'CACHE_SOFT_EXPIRY',
+    'SECRET_KEY',
 ]
 
 if not set(REQUIRED_ENV).issubset(os.environ):
@@ -25,30 +26,27 @@ if not set(REQUIRED_ENV).issubset(os.environ):
                 val = ''
             os.environ[var] = val
 
-# App config
-PORT                = int(os.environ.get('PORT', 5000))
-HOST                = os.environ.get('HOST', '127.0.0.1')
-DEBUG               = str(os.environ.get('DEBUG')).lower() in ('yes', 'true', '1')
-PRODUCTION          = str(os.environ.get('PRODUCTION')).lower() in ('yes','true','1')
-ENVIRONMENT         = os.environ.get('ENVIRONMENT', 'production')
+def asBool(var_name, default=None):
+    if var_name in os.environ:
+        return str(os.environ.get(var_name)).lower() in ('yes', 'true', '1')
+    return default
 
-COMMIT_HASH = os.environ.get('COMMIT_HASH', '')
+def asInt(var_name, default=None):
+    if var_name in os.environ:
+        return int(os.environ.get(var_name))
+    return default
+
+# App config
+PORT                    = asInt('PORT', 5000)
+HOST                    = os.environ.get('HOST', '127.0.0.1')
+DEBUG                   = asBool('DEBUG', False)
+ENVIRONMENT             = os.environ.get('ENVIRONMENT', 'production')
 
 REDIS_URL               = os.environ.get('REDIS_URL')
 SECRET_KEY              = os.environ['SECRET_KEY']
-
-# MEDIA
-
 STATIC_URL              = os.environ['STATIC_URL']
-MEDIA_URL               = os.environ['MEDIA_URL']
-MEDIA_BUCKET            = os.environ['MEDIA_BUCKET']
-MEDIA_KEY_PREFIX        = os.environ['MEDIA_KEY_PREFIX']
-
-AWS_ACCESS_KEY_ID       = os.environ['AWS_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY   = os.environ['AWS_SECRET_ACCESS_KEY']
 
 # Content API config
 CONTENT_API_TOKEN       = os.environ['CONTENT_API_TOKEN']
 CONTENT_API_ROOT        = os.environ['CONTENT_API_ROOT']
-
 CACHE_SOFT_EXPIRY       = int(os.environ['CACHE_SOFT_EXPIRY'])
