@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "coffee-script": "~1.6.x",
+    "fs-extra": "~0.6.x"
+  }
+}
