@@ -78,3 +78,11 @@ class Publication(object):
         stories = content_objects.filter(type=Container, **kwargs).mapOnExecute(Story).sort('-published_date')
         return stories
 
+
+def modelFromRole(content_obj):
+    mapping = {
+        ROLES.STORY         : Story,
+        ROLES.PUBLICATION   : Publication,
+    }
+    return mapping[content_obj.role](content_obj)
+

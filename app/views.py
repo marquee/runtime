@@ -4,7 +4,7 @@ from .data_loader   import data_loader
 
 import template_helpers
 
-from .models        import Publication
+from .models        import Publication, modelFromRole
 
 @app.route('/')
 def index():
@@ -12,6 +12,8 @@ def index():
         'index.html',
         publication=Publication(),
     )
+
+
 
 @app.route('/<slug>/')
 def page(slug):
@@ -24,7 +26,7 @@ def page(slug):
     template_name = "{0}.html".format(target_obj.role)
 
     context = {
-        target_obj.role: target_obj
+        target_obj.role: modelFromRole(target_obj)
     }
 
     return render_template(
