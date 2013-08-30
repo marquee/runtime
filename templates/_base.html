@@ -4,6 +4,9 @@
         <title>{% block html_title %}{% endblock %}</title>
         <meta name="description" content="{% include 'includes/meta_description.txt' ignore missing %}">
         <meta charset="utf-8" />
+        {%- if ENVIRONMENT != 'production' -%}
+            <meta name="robots" content="noindex, nofollow">
+        {%- endif %}
         <link rel="stylesheet" type="text/css" href="http://cdn.droptype.com/formwork/formwork-0.0.1.css">
         <link rel="stylesheet" href="{{ static_url('screen.css') }}" type="text/css">
     </head>

@@ -2,6 +2,9 @@ from app import app
 import settings
 
 
+app.jinja_env.globals.update(ENVIRONMENT=settings.ENVIRONMENT)
+
+
 # Public: helper for including static media assets in templates.
 #         `{{ static_url('images/file.jpg') }}`
 #
@@ -23,6 +26,7 @@ app.jinja_env.globals.update(static_url=static_url)
 def media_url(path):
     return u'{0}{1}'.format(settings.MEDIA_URL, path)
 app.jinja_env.globals.update(media_url=media_url)
+
 
 
 
