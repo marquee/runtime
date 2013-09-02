@@ -9,3 +9,4 @@ polisbooks.db
 static/*
 node_modules/*
 aws_config.json
+.env-development

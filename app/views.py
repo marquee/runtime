@@ -6,11 +6,19 @@ import template_helpers
 
 from .models        import Publication, modelFromRole
 
+
+def load_publication():
+    publication_container = data_loader.load(
+            short_name=settings.PUBLICATION_SHORT_NAME
+        )
+    publication = Publication(publication_container)
+    return publication
+
 @app.route('/')
 def index():
     return render_template(
         'index.html',
-        publication=Publication(),
+        publication=load_publication(),
     )
 
 
@@ -18,7 +26,7 @@ def index():
 @app.route('/<slug>/')
 def page(slug):
 
-    target_obj = data_loader.load(slug)
+    target_obj = data_loader.load(slug=slug)
     if not target_obj:
         abort(404)
 
@@ -26,7 +34,8 @@ def page(slug):
     template_name = "{0}.html".format(target_obj.role)
 
     context = {
-        target_obj.role: modelFromRole(target_obj)
+        target_obj.role : modelFromRole(target_obj),
+        'publication'   : load_publication(),
     }
 
     return render_template(

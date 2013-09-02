@@ -68,8 +68,7 @@ class Story(MContentModel, HasCoverContent):
 
 
 
-class Publication(object):
-
+class Publication(MContentModel):
     def stories(self, **kwargs):
         kwargs.update({
                 'role': ROLES.STORY,

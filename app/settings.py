@@ -8,6 +8,7 @@ REQUIRED_ENV = [
     'STATIC_URL',
     'CACHE_SOFT_EXPIRY',
     'SECRET_KEY',
+    'PUBLICATION_SHORT_NAME',
 ]
 
 if not set(REQUIRED_ENV).issubset(os.environ):
@@ -50,3 +51,4 @@ STATIC_URL              = os.environ['STATIC_URL']
 CONTENT_API_TOKEN       = os.environ['CONTENT_API_TOKEN']
 CONTENT_API_ROOT        = os.environ['CONTENT_API_ROOT']
 CACHE_SOFT_EXPIRY       = int(os.environ['CACHE_SOFT_EXPIRY'])
+PUBLICATION_SHORT_NAME  = os.environ['PUBLICATION_SHORT_NAME']
