@@ -2,9 +2,11 @@
 
 ## Setup
 
-1. Clone the boilerplate template:
+1. Clone the boilerplate template and install dev dependencies:
 
    `$ git clone git@git.droptype.com:offsite-publication-boilerplate.git <project_name>`
+   `$ cd <project_name>`
+   `$ npm install`
 
 2. Re-initialize the repo and copy the .env templates:
 
@@ -26,12 +28,16 @@
    * `AWS_ACCESS_KEY_ID` - from [`Dropbox/Dev/custom-layout-developers-credentials.csv`](https://www.dropbox.com/home/Dev)
    * `AWS_SECRET_ACCESS_KEY` -      ’’
 
-   (They are in separate files to keep credentials that have write access segregated. The `.env` file MUST NOT ever contain API tokens or Access Keys or whatever that have write privileges.)
+   (They are in separate files to keep credentials that have write access
+   segregated. The `.env` file MUST NOT ever contain API tokens or Access
+   Keys or whatever that have write privileges.)
 
 
 ## Static Files
 
-Static assets require CoffeeScript and Compass, as usual. The build process is managed by `cake`. The source files go into `static_source/` and come out in `static/`.
+Static assets require CoffeeScript and Compass, as usual. The build process is
+managed by `cake`. The source files go into `static_source/` and come out in
+`static/`.
 
 ### `$ cake <command>`
 
@@ -54,7 +60,12 @@ Static assets require CoffeeScript and Compass, as usual. The build process is m
 
 ### Serving
 
-In development, static assets for offsite publications are served locally by the Flask app. In production, the assets are served at `http://cdn.mrqe.co`, via CloudFront. The assets are stored in the `cdn.mrqe.co` S3 bucket, with the keys prefixed by `<short_name>/<hash>`, where `<hash>` is the first 18 characters of a `SHA-1` hash of the asset contents.
+In development, static assets for offsite publications are served locally by
+the Flask app. In production, the assets are served at `http://cdn.mrqe.co`,
+via CloudFront. The assets are stored in the `cdn.mrqe.co` S3 bucket, with the
+keys prefixed by `<short_name>/<hash>`, where `<hash>` is the first 18
+characters of a `SHA-1` hash of the asset contents.
 
-To refer to a static asset in the templates, use `{{ static_url('filename.jpg') }}`. This will use the appropriate `STATIC_URL`.
+To refer to a static asset in the templates, use
+`{{ static_url('filename.jpg') }}`. This will use the appropriate `STATIC_URL`.
 
