@@ -82,15 +82,14 @@ class DataLoader(object):
         self._content       = content_backend
         self._cache         = cache_backend
 
-    def load(self, slug, stale_after=None):
+    def load(self, stale_after=None, **kwargs):
         target_object = None
 
         if not stale_after:
             stale_after = self._stale_after
 
         if self._cache:
-            cached_object = self._cache.get(slug)
-            print cached_object
+            cached_object = self._cache.get(kwargs_to_key(kwargs))
             # cached form:
             # {
             #     'stored_at' : '1377816338',
@@ -103,18 +102,18 @@ class DataLoader(object):
 
                 if datetime.utcnow() - object_stored_at > stale_after:
                     # It has expired, so try getting it from the API instead.
-                    target_object = self._load_from_api(slug)
+                    target_object = self._load_from_api(**kwargs)
                 else:
                     # Convert the cached JSON to a Container.
                     target_object = Container(json.loads(cached_object['object']))
 
         if not target_object:
             # Object was not cached (or no cache used), so load from the API.
-            target_object = self._load_from_api(slug)
+            target_object = self._load_from_api(**kwargs)
 
         return target_object
 
-    def _load_from_api(self, slug):
+    def _load_from_api(self, **kwargs):
         """
         Private: load the target object from the Content API using the
                  specified slug. If the object is found and a cache_backend
@@ -122,24 +121,28 @@ class DataLoader(object):
 
         Returns a Container, or None.
         """
-        obj = self._content.filter(type=Container, slug=slug)
+        obj = self._content.filter(type=Container, **kwargs)
         if len(obj) == 1:
             obj = obj[0]
-            logging.debug('Object found', extra={'slug': slug})
+            logging.debug('Object found', extra=kwargs)
             if self._cache:
-                self._cache.set(slug, {
+                self._cache.set(kwargs_to_key(kwargs), {
                         'stored_at': datetime.utcnow().strftime('%s'),
                         'object': obj.toJSON(),
                     })
         else:
             if obj:
-                logging.warning('Got multiple results for a slug', extra={'slug': slug})
+                logging.warning('Got multiple results for a slug', extra=kwargs)
             else:
-                logging.debug('Object not found', extra={'slug': slug})
+                logging.debug('Object not found', extra=kwargs)
             obj = None
         return obj
 
 
+def kwargs_to_key(kwargs):
+    if 'short_name' in kwargs:
+        return "short_name:{short_name}".format(**kwargs)
+    return "slug:{slug}".format(**kwargs)
 
 
 

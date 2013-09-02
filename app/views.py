@@ -6,6 +6,7 @@ import template_helpers
 
 from .models        import Publication, modelFromRole
 
+import settings
 
 def load_publication():
     publication_container = data_loader.load(
