@@ -1,0 +1,60 @@
+# Marquee Offsite Publication
+
+## Setup
+
+1. Clone the boilerplate template:
+
+   `$ git clone git@git.droptype.com:offsite-publication-boilerplate.git <project_name>`
+
+2. Re-initialize the repo and copy the .env templates:
+
+   `$ cake init`
+
+3. Add additional remotes (if necessary)   `$ git add remote origin git@git.droptype.com:<project_name>.git`
+   `$ git add remote heroku git@heroku.com:<project_name>.git`
+
+4. Fill out the environment variables:
+
+   In `.env`:
+
+   * `CONTENT_API_TOKEN` - A read-only [ApplicationToken](http://marquee.by/admin/applications/applicationtoken/)
+   * `PUBLICATION_NAME` - Arbitrary project name
+   * `PUBLICATION_SHORT_NAME` - The short name, used to prefix the asset uploads
+
+   In `.env-development`:
+
+   * `AWS_ACCESS_KEY_ID` - from [`Dropbox/Dev/custom-layout-developers-credentials.csv`](https://www.dropbox.com/home/Dev)
+   * `AWS_SECRET_ACCESS_KEY` -      ’’
+
+   (They are in separate files to keep credentials that have write access segregated. The `.env` file MUST NOT ever contain API tokens or Access Keys or whatever that have write privileges.)
+
+
+## Static Files
+
+Static assets require CoffeeScript and Compass, as usual. The build process is managed by `cake`. The source files go into `static_source/` and come out in `static/`.
+
+### `$ cake <command>`
+
+* `flush:static` - clear the `static/` directory
+* `build` - flush static and rebuild all static files
+    * `build:scripts` - compile just the scripts
+    * `build:styles` - compile just the styles
+    * `build:other` - copy non-coffee/-sass files
+* `watch` - flush static and start the CoffeeScript and Compass watchers
+
+   Note: there is nothing running that updates images when they 
+   change, so you’ll have to run `$ cake build:other` to update
+   those.
+
+* `deploy:static` - build and upload the static files to S3
+
+   If you’ve set up the project as a Heroku app, this command will
+   also update the `STATIC_URL` env variable of the app and restart
+   the server, using the `heroku config:set` command.
+
+### Serving
+
+In development, static assets for offsite publications are served locally by the Flask app. In production, the assets are served at `http://cdn.mrqe.co`, via CloudFront. The assets are stored in the `cdn.mrqe.co` S3 bucket, with the keys prefixed by `<short_name>/<hash>`, where `<hash>` is the first 18 characters of a `SHA-1` hash of the asset contents.
+
+To refer to a static asset in the templates, use `{{ static_url('filename.jpg') }}`. This will use the appropriate `STATIC_URL`.
+
