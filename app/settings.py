@@ -11,11 +11,13 @@ REQUIRED_ENV = [
     'PUBLICATION_SHORT_NAME',
 ]
 
+remaining_env_variables = set(REQUIRED_ENV)
+
 if not set(REQUIRED_ENV).issubset(os.environ):
     try:
         f = open('.env', 'r')
     except IOError:
-        raise IOError('You are missing required environment variables')
+        raise IOError('You are missing a .env file')
 
     if f is not None:
         for line in f.readlines():
@@ -26,6 +28,10 @@ if not set(REQUIRED_ENV).issubset(os.environ):
             else:
                 val = ''
             os.environ[var] = val
+            if var in remaining_env_variables:
+                remaining_env_variables.remove(var)
+    if len(remaining_env_variables) > 0:
+        raise AttributeError('You are missing the following env variables: {0}'.format(remaining_env_variables))
 
 def asBool(var_name, default=None):
     if var_name in os.environ:
@@ -52,3 +58,4 @@ CONTENT_API_TOKEN       = os.environ['CONTENT_API_TOKEN']
 CONTENT_API_ROOT        = os.environ['CONTENT_API_ROOT']
 CACHE_SOFT_EXPIRY       = int(os.environ['CACHE_SOFT_EXPIRY'])
 PUBLICATION_SHORT_NAME  = os.environ['PUBLICATION_SHORT_NAME']
+PUBLICATION_NAME        = os.environ.get('PUBLICATION_NAME', u'')
