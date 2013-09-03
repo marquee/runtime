@@ -3,6 +3,7 @@
     <head>
         <title>{% block html_title %}{% endblock %}</title>
         <meta name="description" content="{% include 'includes/meta_description.txt' ignore missing %}">
+        <meta name="viewport" content="width=device-width">
         <meta charset="utf-8" />
         {%- if ENVIRONMENT != 'production' -%}
             <meta name="robots" content="noindex, nofollow">
