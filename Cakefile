@@ -20,6 +20,7 @@ ASSET_OUTPUT   = path.join(PROJECT_ROOT, 'static/')
 # Options
 option '-q', '--quiet',         'Suppress non-error output'
 option '-p', '--production',    'Compile for production'
+option '-f', '--force',         'Force action'
 
 REQUIRED_ENV_VARS = ['PUBLICATION_SHORT_NAME', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'S3_BUCKET_NAME']
 ENV = null
@@ -204,9 +205,8 @@ doWatch = (options={}, callback) ->
                 doWatchStyles options, ->
                     callback?()
 
-
-doInit = (options={}, callback) ->
-    if fs.existsSync(path.join(PROJECT_ROOT, '.env'))
+doInitEnv = (options={}, callback) ->
+    if fs.existsSync(path.join(PROJECT_ROOT, '.env')) and not options.force
         throw new Error('.env exists. Already initialized?')
 
     crypto.randomBytes 32, (err, secret_key) ->
@@ -230,8 +230,8 @@ doInit = (options={}, callback) ->
         operations = 0
         next = ->
             operations += 1
-            if operations is 4
-                console.log 'Initialized. Next, fill out env variables, add origin and heroku git remotes.'
+            if operations is 2
+                callback?()
 
         fs.writeFile ENV_FILE, env_template, (err) ->
             throw err if err?
@@ -242,6 +242,16 @@ doInit = (options={}, callback) ->
             throw err if err?
             console.log 'Wrote .env-development'
             next()
+
+
+doInit = (options={}, callback) ->
+    doInitEnv options, ->
+
+        operations = 0
+        next = ->
+            operations += 1
+            if operations is 2
+                console.log 'Initialized. Next, fill out env variables, add origin and heroku git remotes.'
 
         fs.mkdirs path.join(PROJECT_ROOT, 'static_source'), (err) ->
             throw err if err?
@@ -350,7 +360,8 @@ doBuildOther = (options={}, callback) ->
 
 # Task definitions
 
-task 'init'             , 'Compile the static sources and put it into static/'          , doInit
+task 'init'             , 'Initialize the project'                                      , doInit
+task 'init:env'         , 'Initialize just the env files (-f to overwrite)'             , doInitEnv
 task 'build'            , 'Compile the static sources and put it into static/'          , doBuild
 task 'build:scripts'    , ''                                                            , doBuildScripts
 task 'build:styles'     , ''                                                            , doBuildStyles

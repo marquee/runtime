@@ -9,6 +9,8 @@
    `$ git clone git@git.droptype.com:offsite-publication-boilerplate.git <project_name>`
    `$ cd <project_name>`
 
+   *(If it’s a pre-existing project, clone from the project repo instead.)*
+
 2. Install the various requirements:
 
    `$ mkvirtualenv <project_name>`
@@ -18,6 +20,8 @@
 3. Re-initialize the repo and copy the .env templates:
 
    `$ cake init`
+
+   *(If this is a pre-existing project, use `init:env` instead.)*
 
 4. Add additional remotes (if necessary)
 
