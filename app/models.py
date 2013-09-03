@@ -76,12 +76,16 @@ class Story(MContentModel, HasCoverContent):
 
 
 class Publication(MContentModel):
-    def stories(self, **kwargs):
-        kwargs.update({
+    def stories(self, *args, **kwargs):
+        query = {}
+        if len(args) > 0:
+            query.update(args[0])
+        query.update(kwargs)
+        query.update({
                 'role': ROLES.STORY,
                 'published_date__exists': True,
             })
-        stories = content_objects.filter(type=Container, **kwargs).mapOnExecute(Story).sort('-published_date')
+        stories = content_objects.filter(type=Container, **query).mapOnExecute(Story).sort('-published_date')
         return stories
 
 
