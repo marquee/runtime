@@ -1,21 +1,30 @@
 # Marquee Offsite Publication
 
+
+
 ## Setup
 
 1. Clone the boilerplate template and install dev dependencies:
 
    `$ git clone git@git.droptype.com:offsite-publication-boilerplate.git <project_name>`
    `$ cd <project_name>`
+
+2. Install the various requirements:
+
+   `$ mkvirtualenv <project_name>`
+   `$ pip install -r requirements.txt`
    `$ npm install`
 
-2. Re-initialize the repo and copy the .env templates:
+3. Re-initialize the repo and copy the .env templates:
 
    `$ cake init`
 
-3. Add additional remotes (if necessary)   `$ git add remote origin git@git.droptype.com:<project_name>.git`
+4. Add additional remotes (if necessary)
+
+   `$ git add remote origin git@git.droptype.com:<project_name>.git`
    `$ git add remote heroku git@heroku.com:<project_name>.git`
 
-4. Fill out the environment variables:
+5. Fill out the environment variables:
 
    In `.env`:
 
@@ -33,11 +42,30 @@
    Keys or whatever that have write privileges.)
 
 
+
+## Running the project
+
+First, make sure you are in the virtualenv: `$ workon <project_name>`
+
+To run the project in debug mode, with the auto reloader, use `$ python run.py debug`.
+
+To run the project as if it is on Heroku, use `$ foreman start`.
+
+
+
+## Deploying the project
+
+(Assuming Heroku) To deploy, just `$ git push heroku master`. You’ll also want
+to run `$ cake deploy:static` if you made changes to the static assets.
+
+
+
 ## Static Files
 
 Static assets require CoffeeScript and Compass, as usual. The build process is
 managed by `cake`. The source files go into `static_source/` and come out in
 `static/`.
+
 
 ### `$ cake <command>`
 
@@ -57,6 +85,7 @@ managed by `cake`. The source files go into `static_source/` and come out in
    If you’ve set up the project as a Heroku app, this command will
    also update the `STATIC_URL` env variable of the app and restart
    the server, using the `heroku config:set` command.
+
 
 ### Serving
 

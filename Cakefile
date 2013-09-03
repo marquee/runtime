@@ -230,7 +230,7 @@ doInit = (options={}, callback) ->
         operations = 0
         next = ->
             operations += 1
-            if operations is 5
+            if operations is 4
                 console.log 'Initialized. Next, fill out env variables, add origin and heroku git remotes.'
 
         fs.writeFile ENV_FILE, env_template, (err) ->
@@ -247,12 +247,6 @@ doInit = (options={}, callback) ->
             throw err if err?
             console.log 'Made `static_source/`'
             next()
-
-        executeCommand ['mkvirtualenv', PROJECT_NAME], options, ->
-            console.log 'Made virtual environment:', PROJECT_NAME
-            executeCommand ['pip', 'install', '-r', 'requirements.txt'], options, ->
-                console.log 'Installed Python requirements from requirements.txt'
-                next()
 
         executeCommand ['rm', '-rf', '.git'], options, ->
             executeCommand ['git', 'init'], options, ->
