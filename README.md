@@ -59,7 +59,7 @@ To run the project as if it is on Heroku, use `$ foreman start`.
 
 ## Deploying the project
 
-(Assuming Heroku)
+(Assuming [Heroku](https://github.com/droptype/marquee/wiki/Heroku-Setup))
 
 If this is the first time the app is being deployed, you need to set
 certain environment variables using `$ heroku config:set`
