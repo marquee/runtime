@@ -45,13 +45,10 @@ app.jinja_env.filters['to_item_size'] = to_item_size
 
 from jinja2 import evalcontextfilter, Markup
 from cgi import escape
+from composer_content import renderBlock
 @evalcontextfilter
 def render_block(eval_ctx, block):
-    result = u''
-    if block.type == Text.type:
-        result = u"<p>{0}</p>".format(block.content.replace('\n', '<br>'))
-    elif block.type == Image.type:
-        result = u"<img src=\"{0}\">".format(block.content.get('640', {}).get('url'))
+    result = renderBlock(block)
     if eval_ctx.autoescape:
         result = Markup(result)
     return result

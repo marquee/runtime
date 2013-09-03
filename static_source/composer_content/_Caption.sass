@@ -1,0 +1,32 @@
+@import "compass/css3"
+
+@import "_responsive"
+@import "_default_theme"
+
+
++exports('Caption')
+    %has-caption
+        .Caption
+            +border-radius($caption_border_radius)
+            +box-sizing(border-box)
+            display         : block
+            margin-top      : 0
+            // TODO: rems
+            margin          : $caption_margin
+            padding         : $caption_padding        
+            +respond-to-lt($main_column_width)
+                padding-right   : $body_padding
+                padding-left    : $body_padding
+
+
+    // Theming
+
+    %has-caption
+        .Caption
+            background-color    : $caption_background_color
+            font-size           : $caption_font_size
+            font-family         : $caption_font_family
+            border-width        : $caption_border_width
+            border-style        : $caption_border_style
+            border-color        : $caption_border_color
+            color               : $caption_color

@@ -1,0 +1,18 @@
+@import "compass/css3"
+
+@import "_responsive"
+@import "_default_theme"
+@import "_Block"
+@import "_Caption"
+
+
++exports('Image')
+    %ImageBlock
+        @extend %Block
+        @extend %floatable-sizable-block
+        @extend %has-caption
+        z-index: 3
+        img
+            width: 100%
+
+

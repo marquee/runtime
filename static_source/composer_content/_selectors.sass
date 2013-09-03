@@ -1,0 +1,27 @@
+// This file generates the actual selectors that correspond with the
+// composer_content rendering. To use different base class names, override
+// the settings here, and provide the desired class name argument to the
+// composer_content render function.
+
+
+$image_base_class   : 'ImageBlock'  !default
+$text_base_class    : 'TextBlock'   !default
+
+
+.#{ $image_base_class }
+    @extend %#{ $image_base_class }
+
+.#{ $text_base_class }
+    @extend %#{ $text_base_class }
+
+@each $role in paragraph, heading, pre, quote
+    .#{ $text_base_class }-#{ $role }
+        @extend %#{ $text_base_class }-#{ $role }
+
+@each $effect in dropcaps
+    .#{ $text_base_class }-effect-#{ $effect }
+        @extend %#{ $text_base_class }-effect-#{ $effect }
+
+@each $align in left, center, right
+    .#{ $text_base_class }-align-#{ $align }
+        @extend %#{ $text_base_class }-align-#{ $align }
