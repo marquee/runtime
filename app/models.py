@@ -64,7 +64,14 @@ class Story(MContentModel, HasCoverContent):
 
     @property
     def published(self):
-        return Dotify(self._container.published_json)
+        # Map the published data to .published. Right now, the uses the
+        # _include_published flag on the query. However, it may change to be
+        # a query like ?_as_of=@published_date, so this abstraction will keep
+        # the template API consistent.
+        if self._container._published_json:
+            return Story(Container(self._container._published_json[0]))
+        return None
+
 
 
 

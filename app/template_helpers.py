@@ -43,7 +43,8 @@ def to_item_size(count):
 app.jinja_env.filters['to_item_size'] = to_item_size
 
 
-from jinja2 import evalcontextfilter, Markup, escape
+from jinja2 import evalcontextfilter, Markup
+from cgi import escape
 @evalcontextfilter
 def render_block(eval_ctx, block):
     result = u''
@@ -55,6 +56,35 @@ def render_block(eval_ctx, block):
         result = Markup(result)
     return result
 app.jinja_env.filters['render_block'] = render_block
+
+from content.models import Text
+@evalcontextfilter
+def content_preview(eval_ctx, story, char_limit=400):
+    content_preview = ''
+    if story.description:
+        content_preview = description[:char_limit]
+        if len(description) > char_limit:
+            content_preview += '&hellip;'
+    else:
+        content_preview_text_length = 0
+        for block in story.content:
+            if block and block.type == Text.type and block.role != 'pre':
+                content = escape(block.content.lstrip().rstrip())
+                if content:
+                    if content_preview_text_length + len(content) > char_limit:
+                        content = content[:char_limit - content_preview_text_length]
+                    content_preview_text_length += len(content)
+                    if content_preview_text_length >= char_limit:
+                        content += '&hellip;'
+                    content_preview += " <span class='preview-%s'>%s</span>" % (block.role, content,)
+                    if content_preview_text_length >= char_limit:
+                        break
+    if eval_ctx.autoescape:
+        content_preview = Markup(content_preview)
+    return content_preview
+app.jinja_env.filters['content_preview'] = content_preview
+
+
 
 
 

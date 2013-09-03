@@ -11,8 +11,9 @@ class ContentAPIWrapper(object):
 
     def _prepareHeaders(self, headers={}):
         headers.update({
-                'Authorization' : 'Token {0}'.format(self._token),
-                'Content-Type'  : 'application/json',
+                'Authorization'         : 'Token {0}'.format(self._token),
+                'Content-Type'          : 'application/json',
+                'X-Include-Published'   : True,
             })
         return headers
 
