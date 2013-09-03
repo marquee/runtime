@@ -1,0 +1,85 @@
+// https://gist.github.com/3914311
+
+$break_small: 640px
+$break_medium: 980px
+$break_large: 1400px
+$break_extra_large: 1600px
+$break_extra_extra_large: 2000px
+
+
+@mixin respond-to($media)
+    @if $media == handhelds
+        @media only screen and (max-width: $break_small)
+            @content
+    @else if $media == narrow-screens
+        @media only screen and (min-width: $break_small + 1) and (max-width: $break_medium)
+            @content
+
+    @else if $media == full-screens
+        @media only screen and (min-width: $break_medium + 1) and (max-width: $break_large)
+            @content
+
+    @else if $media == wide-screens
+        @media only screen and (min-width: $break_large + 1)
+            @content
+
+    @else if $media == extra-wide-screens
+        @media only screen and (min-width: $break_extra_large + 1)
+            @content
+
+    @else if $media == ultra-wide-screens
+        @media only screen and (min-width: $break_extra_extra_large + 1)
+            @content
+
+
+
+@mixin respond-to-gt($media)
+    @if $media == handhelds
+        @media only screen and (min-width: $break_small + 1)
+            @content
+    @else if $media == narrow-screens
+        @media only screen and (min-width: $break_medium + 1)
+            @content
+
+    @else if $media == full-screens
+        @media only screen and (min-width: $break_large + 1)
+            @content
+
+    @else if $media == wide-screens
+        @media only screen and (min-width: $break_extra_large + 1)
+            @content
+
+    @else if $media == extra-wide-screens
+        @media only screen and (min-width: $break_extra_extra_large + 1)
+            @content
+
+    @else
+        @media only screen and (min-width: $media + 1)
+            @content
+
+
+
+@mixin respond-to-lt($media)
+    @if $media == narrow-screens
+        @media only screen and (max-width: $break_small)
+            @content
+
+    @else if $media == full-screens
+        @media only screen and (max-width: $break_medium)
+            @content
+
+    @else if $media == wide-screens
+        @media only screen and (max-width: $break_large)
+            @content
+
+    @else if $media == extra-wide-screens
+        @media only screen and (max-width: $break_extra_large)
+            @content
+
+    @else if $media == ultra-wide-screens
+        @media only screen and (max-width: $break_extra_extra_large)
+            @content
+
+    @else
+        @media only screen and (max-width: $media - 1)
+            @content
