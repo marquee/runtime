@@ -5,6 +5,7 @@ Werkzeug==0.8.3
 boto==2.9.6
 fancycompleter==0.4
 gunicorn==0.17.4
+noat==1.0.0
 pdbpp==0.7.2
 pyrepl==0.8.4
 python-dateutil==2.1

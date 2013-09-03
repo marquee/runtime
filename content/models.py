@@ -1,7 +1,11 @@
 import json
+from noat       import NOAT
+from datetime   import date, datetime
+
 from .fields import *
 
-from datetime import date, datetime
+
+
 
 def _get_field_type_for(name, value):
     """
@@ -246,17 +250,21 @@ TEXT_ROLES = [u'paragraph', u'pre', u'quote', u'heading']
 class Text(_ContentObject):
     type = 'text'
     fields = {
-            'content'   : (StringField, dict(default=u'')                               ),
-            'role'      : (StringField, dict(default=u'paragraph', choices=TEXT_ROLES)  ),
+            'content'   : (StringField, dict(default=u'')         ),
+            'role'      : (StringField, dict(default=u'paragraph')),
         }
 
-    def toHTML(self):
-        from .noat import NOAT, tag_map
+    def toHTML(self, external_links=False):
+        tag_map = {
+            'strong'    : 'strong',
+            'emphasis'  : 'em',
+            'link'      : 'a',
+        }
         markup = NOAT(self.content)
         for a in self.annotations:
             if 'url' in a:
                 a['href'] = a.pop('url').replace('"','&#34;').replace('\n',' ')
-                if len(a['href'].split('://')) > 1:
+                if len(a['href'].split('://')) > 1 and external_links:
                     a['target'] = '_blank'
             try:
                 start = a.pop('start')
