@@ -1,13 +1,5 @@
 from content import Text, Image, Container
 
-import image
-import text
-
-
-type_render_map = {
-    Text.type   : text,
-    Image.type  : image,
-}
 
 default_base_class_names = {
     Text.type   : 'TextBlock',
