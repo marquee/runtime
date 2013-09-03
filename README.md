@@ -55,7 +55,15 @@ To run the project as if it is on Heroku, use `$ foreman start`.
 
 ## Deploying the project
 
-(Assuming Heroku) To deploy, just `$ git push heroku master`. You’ll also want
+(Assuming Heroku)
+
+If this is the first time the app is being deployed, you need to set
+certain environment variables using `$ heroku config:set`
+They can be set (almost) all at once:
+
+    $ heroku config:set CACHE_SOFT_EXPIRY=10 CONTENT_API_TOKEN=<read_only_token> CONTENT_API_ROOT=marquee.by/content/ DEBUG=False ENVIRONMENT=production PUBLICATION_NAME="<publication name>" SECRET_KEY=<secret_key> PUBLICATION_SHORT_NAME=<short_name>
+
+To deploy the code, just `$ git push heroku master`. You’ll also want
 to run `$ cake deploy:static` if you made changes to the static assets.
 
 
