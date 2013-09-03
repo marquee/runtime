@@ -5,6 +5,7 @@ AWS                 = require 'aws-sdk'
 crypto              = require 'crypto'
 mime                = require 'mime'
 path                = require 'path'
+UglifyJS            = require 'uglify-js'
 walk                = require 'walk'
 
 
@@ -115,6 +116,47 @@ hashFiles = (file_list, callback) ->
                 data_to_hash.forEach (d) -> hash.update(d)
                 callback(hash.digest('hex')[...18])
 
+minifyScripts = (options, callback) ->
+    console.log 'Minifying scripts in place'
+    asset_list = []
+    walker = walk.walk(ASSET_OUTPUT)
+    walker.on 'file', (root, file_stats, next) ->
+        if file_stats.name.split('.').pop() is 'js'
+            asset_list.push(path.join(root, file_stats.name))
+        next()
+    walker.on 'end', ->
+        num_compressed = 0
+        if asset_list.length is 0
+            console.log 'No js to minify'
+            callback?()
+        else
+            asset_list.forEach (file_path) ->
+                console.log file_path
+                fs.readFile file_path, (err, data) ->
+                    throw err if err?
+                    minified_js = compressScriptCode(data.toString())
+                    fs.writeFile file_path, minified_js, (err) ->
+                        throw err if err?
+                        num_compressed += 1
+                        if num_compressed is asset_list.length
+                            callback?()
+
+
+
+
+compressScriptCode = (js_script_code) ->
+    toplevel_ast = UglifyJS.parse(js_script_code)
+    toplevel_ast.figure_out_scope()
+
+    compressor = UglifyJS.Compressor
+        drop_debugger   : true
+        warnings        : false
+    compressed_ast = toplevel_ast.transform(compressor)
+    compressed_ast.figure_out_scope()
+    compressed_ast.mangle_names()
+
+    min_code = compressed_ast.print_to_string()
+    return min_code
 
 class File
     constructor: (path, file_stats) ->
@@ -268,26 +310,29 @@ doInit = (options={}, callback) ->
 
 
 doFlushStatic = (options={}, callback) ->
+    console.log 'Flushing static'
     fs.removeSync(ASSET_OUTPUT)
     fs.mkdirsSync(ASSET_OUTPUT)
     callback?()
 
 
 doBuildScripts = (options={}, callback) ->
-   coffee_command = [
+    console.log 'Building scripts'
+    coffee_command = [
         'coffee',
         '--output', ASSET_OUTPUT
         '--compile', ASSET_SOURCE
     ]
     executeCommand coffee_command, options, ->
         if options.production
-            #minify
-            callback?()
+            minifyScripts options, ->
+                callback?()
         else
             callback?()
 
 
 doBuildStyles = (options={}, callback) ->
+    console.log 'Building styles'
     compass_command = makeCompassCommand('compile', options)
     executeCommand(compass_command, options, callback)
 
@@ -308,6 +353,7 @@ doWatchStyles = (options={}, callback) ->
 
 doDeployStatic = (options={}, callback) ->
     setUpEnv()
+    options.production ?= true
     doBuild options, ->
         pushAssetsToS3 options, (new_static_url) ->
             update_static_url_command = ['heroku','config:set', "STATIC_URL=#{ new_static_url }"]
