@@ -51,7 +51,7 @@ def render_block(eval_ctx, block):
     if block.type == Text.type:
         result = u"<p>{0}</p>".format(block.content.replace('\n', '<br>'))
     elif block.type == Image.type:
-        result = u"<img src=\"{0}\">".format(block.content.get(640, {}).get('url'))
+        result = u"<img src=\"{0}\">".format(block.content.get('640', {}).get('url'))
     if eval_ctx.autoescape:
         result = Markup(result)
     return result
