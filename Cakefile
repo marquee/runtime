@@ -7,29 +7,29 @@ mime                = require 'mime'
 path                = require 'path'
 UglifyJS            = require 'uglify-js'
 walk                = require 'walk'
-
-
+execSync            = require 'execSync'
+ 
 # Configuration
 PROJECT_NAME = fs.realpathSync(__filename)
 PROJECT_ROOT = path.join(path.dirname(PROJECT_NAME))
-
+ 
 ASSET_SOURCE   = path.join(PROJECT_ROOT, 'static_source/')
 ASSET_OUTPUT   = path.join(PROJECT_ROOT, 'static/')
-
-
-
+ 
+ 
+ 
 # Options
 option '-q', '--quiet',         'Suppress non-error output'
 option '-p', '--production',    'Compile for production'
 option '-f', '--force',         'Force action'
-
+ 
 REQUIRED_ENV_VARS = ['PUBLICATION_SHORT_NAME', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'S3_BUCKET_NAME']
 ENV = null
 s3 = null
-
+ 
 ENV_FILE = path.join(PROJECT_ROOT, '.env')
 ENV_DEVELOPMENT_FILE = path.join(PROJECT_ROOT, '.env-development')
-
+ 
 loadEnvFile = (f) ->
     try
         data = fs.readFileSync(f)
@@ -39,7 +39,7 @@ loadEnvFile = (f) ->
         unless line is ''
             [key, val] = line.split('=', 2)
             ENV[key] = val
-
+ 
 setUpEnv = ->
     unless ENV?
         ENV = {}
@@ -49,19 +49,20 @@ setUpEnv = ->
         REQUIRED_ENV_VARS.forEach (env_var) ->
             unless ENV[env_var]?.length > 0
                 missing_env_vars.push(env_var)
-
+ 
         unless missing_env_vars.length is 0
             throw new Error("You are missing the following env variables: #{ missing_env_vars.join(', ') }")
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
 # Helpers
-
+ 
 executeCommand = (command, options, callback, errorCB) ->
     exec command.join(' '), (err, stdout, stderr) ->
         if err?
+            console.log '\n\n\n', '*******************', command, 'failed!\n\n***************\n', err, stderr
             if errorCB?
                 errorCB(err)
             else
@@ -71,7 +72,7 @@ executeCommand = (command, options, callback, errorCB) ->
                 console.log stderr
                 console.log stdout
             callback?()
-
+ 
 spawnCommand = (command, callback) ->
     command_name = command.shift()
     watcher = spawn(command_name, command)
@@ -86,7 +87,7 @@ spawnCommand = (command, callback) ->
     watcher.on 'close', (exit_code) ->
         console.log "#{ command_name } exit: #{ exit_code }"
     callback?()
-
+ 
 makeCompassCommand = (command, options) ->
     compass_command = ['compass', command, '--force']
     compass_command.push('--environment')
@@ -94,7 +95,7 @@ makeCompassCommand = (command, options) ->
         compass_command.push('production')
     else
         compass_command.push('development')
-
+ 
     compass_extra_options = [
         '--relative-assets',
         '--require',            'compass-normalize',
@@ -103,9 +104,17 @@ makeCompassCommand = (command, options) ->
         '--images-dir',         ASSET_SOURCE,
         '--javascripts-dir',    ASSET_OUTPUT,
     ]
+ 
+    python_base = execSync.exec('which python').stdout.trim().replace(path.join('bin', 'python'),'')
+    extensions = ['composer'].map (ext_name) -> path.join(python_base, 'src', ext_name)
+ 
+    extensions.forEach (ext) ->
+        compass_extra_options.push('--load')
+        compass_extra_options.push(ext)
+ 
     compass_command.push(compass_extra_options...)
     return compass_command
-
+ 
 hashFiles = (file_list, callback) ->
     data_to_hash = []
     file_list.forEach (file_obj) ->
@@ -115,7 +124,7 @@ hashFiles = (file_list, callback) ->
                 hash = crypto.createHash('sha1')
                 data_to_hash.forEach (d) -> hash.update(d)
                 callback(hash.digest('hex')[...18])
-
+ 
 minifyScripts = (options, callback) ->
     console.log 'Minifying scripts in place'
     asset_list = []
@@ -140,24 +149,24 @@ minifyScripts = (options, callback) ->
                         num_compressed += 1
                         if num_compressed is asset_list.length
                             callback?()
-
-
-
-
+ 
+ 
+ 
+ 
 compressScriptCode = (js_script_code) ->
     toplevel_ast = UglifyJS.parse(js_script_code)
     toplevel_ast.figure_out_scope()
-
+ 
     compressor = UglifyJS.Compressor
         drop_debugger   : true
         warnings        : false
     compressed_ast = toplevel_ast.transform(compressor)
     compressed_ast.figure_out_scope()
     compressed_ast.mangle_names()
-
+ 
     min_code = compressed_ast.print_to_string()
     return min_code
-
+ 
 class File
     constructor: (path, file_stats) ->
         @path = path
@@ -165,7 +174,7 @@ class File
         @size = file_stats.size
         @mime_type = mime.lookup(@name)
         @_contents = null
-
+ 
     getContents: (cb) ->
         unless @_contents
             fs.readFile @path, (err, data) =>
@@ -190,8 +199,8 @@ class File
                 throw err if err
                 console.log 'uploaded:', target_key
                 cb()
-
-
+ 
+ 
 discoverAssets = (options, callback) ->
     asset_list = []
     walker = walk.walk(ASSET_OUTPUT)
@@ -202,17 +211,17 @@ discoverAssets = (options, callback) ->
     walker.on 'end', ->
         hashFiles asset_list, (asset_hash) ->
             callback(asset_list, asset_hash)
-
-
-
-
+ 
+ 
+ 
+ 
 pushAssetsToS3 = (options, callback) ->
-
+ 
     AWS.config.update
         accessKeyId     : ENV.AWS_ACCESS_KEY_ID
         secretAccessKey : ENV.AWS_SECRET_ACCESS_KEY
     s3 = new AWS.S3()
-
+ 
     discoverAssets options, (asset_list, asset_hash) ->
         console.log asset_hash + ':', asset_list.length, 'assets'
         uploaded_files = []
@@ -226,10 +235,10 @@ pushAssetsToS3 = (options, callback) ->
                     if uploaded_files.length is asset_list.length
                         new_static_url = "http://#{ ENV.S3_BUCKET_NAME }/#{ key_prefix }"
                         callback?(new_static_url)
-
-
+ 
+ 
 # Actual task functions
-
+ 
 doBuild = (options={}, callback) ->
     console.log 'Building...'
     doFlushStatic options, ->
@@ -238,19 +247,19 @@ doBuild = (options={}, callback) ->
                 doBuildStyles options, ->
                     callback?()
                     console.log 'Build done!'
-
-
+ 
+ 
 doWatch = (options={}, callback) ->
     doFlushStatic options, ->
         doBuildOther options, ->
             doWatchScripts options, ->
                 doWatchStyles options, ->
                     callback?()
-
+ 
 doInitEnv = (options={}, callback) ->
     if fs.existsSync(path.join(PROJECT_ROOT, '.env')) and not options.force
         throw new Error('.env exists. Already initialized?')
-
+ 
     crypto.randomBytes 32, (err, secret_key) ->
         env_template = """
         CACHE_SOFT_EXPIRY=10
@@ -268,38 +277,38 @@ doInitEnv = (options={}, callback) ->
         AWS_SECRET_ACCESS_KEY=
         S3_BUCKET_NAME=cdn.mrqe.co
         """
-
+ 
         operations = 0
         next = ->
             operations += 1
             if operations is 2
                 callback?()
-
+ 
         fs.writeFile ENV_FILE, env_template, (err) ->
             throw err if err?
             console.log 'Wrote .env'
             next()
-
+ 
         fs.writeFile ENV_DEVELOPMENT_FILE, env_development_template, (err) ->
             throw err if err?
             console.log 'Wrote .env-development'
             next()
-
-
+ 
+ 
 doInit = (options={}, callback) ->
     doInitEnv options, ->
-
+ 
         operations = 0
         next = ->
             operations += 1
             if operations is 2
                 console.log 'Initialized. Next, fill out env variables, add origin and heroku git remotes.'
-
+ 
         fs.mkdirs path.join(PROJECT_ROOT, 'static_source'), (err) ->
             throw err if err?
             console.log 'Made `static_source/`'
             next()
-
+ 
         executeCommand ['rm', '-rf', '.git'], options, ->
             executeCommand ['git', 'init'], options, ->
                 console.log 're-initialized git'
@@ -307,15 +316,15 @@ doInit = (options={}, callback) ->
                 executeCommand upstream_command, options, ->
                     console.log 'upstream remote added'
                     next()
-
-
+ 
+ 
 doFlushStatic = (options={}, callback) ->
     console.log 'Flushing static'
     fs.removeSync(ASSET_OUTPUT)
     fs.mkdirsSync(ASSET_OUTPUT)
     callback?()
-
-
+ 
+ 
 doBuildScripts = (options={}, callback) ->
     console.log 'Building scripts'
     coffee_command = [
@@ -329,14 +338,16 @@ doBuildScripts = (options={}, callback) ->
                 callback?()
         else
             callback?()
-
-
+ 
+ 
 doBuildStyles = (options={}, callback) ->
     console.log 'Building styles'
     compass_command = makeCompassCommand('compile', options)
+ 
+    console.log compass_command, compass_command.join(' ')
     executeCommand(compass_command, options, callback)
-
-
+ 
+ 
 doWatchScripts = (options={}, callback) ->
     coffee_command = [
         'coffee',
@@ -345,12 +356,12 @@ doWatchScripts = (options={}, callback) ->
         '--compile', ASSET_SOURCE
     ]
     spawnCommand(coffee_command, callback)
-
-
+ 
+ 
 doWatchStyles = (options={}, callback) ->
     compass_command = makeCompassCommand('watch', options)
     spawnCommand(compass_command, callback)
-
+ 
 doDeployStatic = (options={}, callback) ->
     setUpEnv()
     options.production ?= true
@@ -366,8 +377,8 @@ doDeployStatic = (options={}, callback) ->
                 console.log '\n** Probably not a heroku app. You can ignore that.'
                 callback?()
             executeCommand(update_static_url_command, options, success, error)
-
-
+ 
+ 
 doBuildOther = (options={}, callback) ->
     walker = walk.walk(ASSET_SOURCE)
     to_copy = []
@@ -400,12 +411,12 @@ doBuildOther = (options={}, callback) ->
                         copyFile()
                 else
                     copyFile()
-
-
-
-
+ 
+ 
+ 
+ 
 # Task definitions
-
+ 
 task 'init'             , 'Initialize the project'                                      , doInit
 task 'init:env'         , 'Initialize just the env files (-f to overwrite)'             , doInitEnv
 task 'build'            , 'Compile the static sources and put it into static/'          , doBuild
@@ -417,6 +428,3 @@ task 'watch'            , 'Spawn coffee and compass watchers'                   
 task 'deploy:static'    , 'Deploy the static files to S3'                               , doDeployStatic
 # task 'setenv'           , 'Set production environment variables from .env_production'   , doSetEnv
 # task 'getenv'           , 'Get production environment variables to .env_production'     , doGetEnv
-
-
-
