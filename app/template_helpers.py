@@ -1,173 +1,145 @@
-from app import app
+from app        import app
+from cgi        import escape
+from composer   import renderBlock
+from content    import Text
+from jinja2     import evalcontextfilter, Markup
+
 import settings
 
 
+
+# Add various items to the template globals
 app.jinja_env.globals.update(ENVIRONMENT=settings.ENVIRONMENT)
+app.jinja_env.globals.update(DEBUG=settings.DEBUG)
 
 
-# Public: helper for including static media assets in templates.
-#         `{{ static_url('images/file.jpg') }}`
-#
-# path - a String path to the asset, relative to the root of the static folder
-#
-# Returns the absolute URL to the asset.
+
 def static_url(path):
+    """
+    Public: helper for including static media assets in templates.
+
+    Example
+
+        {{ static_url('images/file.jpg') }}
+
+    path - a String path to the asset, relative to the root of the static folder
+
+    Returns the absolute URL to the asset.
+    """
     return u'{0}{1}'.format(settings.STATIC_URL, path)
 app.jinja_env.globals.update(static_url=static_url)
 
 
 
-# Public: helper for including user-uploaded media in templates.
-#         `{{ media_url('images/file.jpg') }}`
-#
-# path - a String path to the asset, relative to the root of the media folder
-#
-# Returns the absolute URL to the asset.
 def media_url(path):
+    """
+    Public: helper for including user-uploaded media in templates.
+
+    Example
+
+        {{ media_url('images/file.jpg') }}
+
+    path - a String path to the asset, relative to the root of the media folder
+
+    Returns the absolute URL to the asset.
+    """
     return u'{0}{1}'.format(settings.MEDIA_URL, path)
 app.jinja_env.globals.update(media_url=media_url)
 
 
 
-
-# Goes with Formwork's .item- variants.
 def to_item_size(count):
+    """
+    Public: filter that converts a count of items to the appropriate size for
+    [Formwork](https://github.com/droptype/formwork)'s `.item-` variants.
+    
+    count - the int count of items
+    
+    Returns the str size name.
+    """
+
     size_map = {
         1: 'full',
         2: 'half',
         3: 'third',
-        4: 'quarter',
+        4: 'fourth',
         5: 'fifth',
     }
     return size_map.get(count, 'full')
 app.jinja_env.filters['to_item_size'] = to_item_size
 
 
-from jinja2 import evalcontextfilter, Markup
-from cgi import escape
-from composer_content import renderBlock
+
 @evalcontextfilter
 def render_block(eval_ctx, block):
+    """
+    Public: a filter that renders the given block.
+
+    block - the Block to render
+
+    Returns the str markup for the block.
+    """
     result = renderBlock(block)
     if eval_ctx.autoescape:
         result = Markup(result)
     return result
 app.jinja_env.filters['render_block'] = render_block
 
-from content.models import Text
+
+
 @evalcontextfilter
 def content_preview(eval_ctx, story, char_limit=400):
-    content_preview = ''
+    """
+    Public: a filter that generates a content preview for a Story. Uses the
+            description of the Story, if it has one, or the text content.
+
+    story         - the Story to preview
+    char_limit    - (optional:400) the int number of characters to show
+
+    Returns a str of HTML up to `char_limit` content characters long (count
+    doesn't include markup).
+    """
+    # Default to an empty string since this is for a template.
+    content_preview = u''
+
     if story.description:
         content_preview = description[:char_limit]
         if len(description) > char_limit:
             content_preview += '&hellip;'
+
     else:
         content_preview_text_length = 0
+
         for block in story.content:
+
+            # Only include Text blocks that aren't pre-formatted.
             if block and block.type == Text.type and block.role != 'pre':
-                content = escape(block.content.lstrip().rstrip())
+                content = block.content.lstrip().rstrip()
                 if content:
+
+                    # If this iteration of content will put the total over the
+                    # limit, truncate it.
                     if content_preview_text_length + len(content) > char_limit:
                         content = content[:char_limit - content_preview_text_length]
+
+                    # Keep track of the preview length.
                     content_preview_text_length += len(content)
+
+                    # Escape after, so character count doesn't include markup.
+                    content = escape(content)
+
+                    # Add an ellipsis to the content to append if over the limit.
                     if content_preview_text_length >= char_limit:
                         content += '&hellip;'
-                    content_preview += " <span class='preview-%s'>%s</span>" % (block.role, content,)
+
+                    # Wrap the iteration's snippet in a tag that indicates the
+                    # role, to allow for styling.
+                    content_preview += u" <span data-role='{0}'>{1}</span>".format(block.role, content)
                     if content_preview_text_length >= char_limit:
                         break
+
     if eval_ctx.autoescape:
         content_preview = Markup(content_preview)
+
     return content_preview
 app.jinja_env.filters['content_preview'] = content_preview
-
-
-
-
-
-
-
-
-from content.models import Container, Text, Image, Embed, instanceFromRaw
-
-def render_flatpage(post, link_title=False):
-    published_post = post.get('published_json')
-    post_html = []
-    if published_post:
-        post = Container(published_post)
-
-    post_html += render_content_blocks(post.get('content'))
-
-    return u''.join(post_html)
-
-
-
-def render_content_blocks(content):
-    content_html = []
-    for block_raw in content:
-        block = instanceFromRaw(block_raw)
-        if block.type == Text.type:
-            content_html.append(render_textblock(block))
-        elif block.type == Image.type:
-            content_html.append(render_imageblock(block))
-        elif block.type == Embed.type:
-            content_html.append(render_embedblock(block))
-    return content_html
-
-# TODO: move to py-layout?
-def render_imageblock(block, classes=None, attrs=None):
-    if not classes:
-        classes = []
-    if not attrs:
-        attrs = {}
-
-    for k, v in block.layout.items():
-        classes.append(u"{0}-{1}".format(k,v))
-
-    try:
-        url = block.content['1280']['url']
-    except KeyError:
-        return u''
-    else:
-        caption_html = ''
-        for a in block.get('annotations',[]):
-            if a['type'] == 'caption':
-                caption_html = u"<div class='Caption'>{0}</div>".format(a['content'])
-        return u"""
-            <div class='ImageBlock {classes}''>
-                <div class='content'>
-                    <img src='{url}'>
-                    {caption_html}
-                </div>
-            </div>
-            """.format(
-                url=url,
-                classes=u' '.join(classes),
-                caption_html=caption_html,
-            )
-
-def render_embedblock(block):
-    return ''
-
-def render_textblock(block, classes=None, attrs=None):
-    # because classes=[] in the sig is bad
-    if not classes:
-        classes = []
-    if not attrs:
-        attrs = {}
-    TAGS = {
-        'paragraph': 'p',
-        'pre': 'p',
-        'quote': 'p',
-        'heading': 'h2',
-    }
-    arrs = ["{0}='{1}'".format(k,v) for k, v in attrs.items()]
-    # TODO: layout classes
-    classes.append(block.role)
-    markup = u"<{tag} class='TextBlock {classes}' {attrs}>{content}</{tag}>".format(
-            tag=TAGS[block.role],
-            classes=u' '.join(classes),
-            attrs=u' '.join(attrs),
-            content=block.toHTML(),
-        )
-    return markup

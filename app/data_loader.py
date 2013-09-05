@@ -1,14 +1,15 @@
 from content    import ContentObjects, Container
-
-from datetime import datetime, timedelta
+from datetime   import datetime, timedelta
+import json
+import logging
 import redis
 import settings
-import json
+
 
 
 class DummyContentCache(object):
     """
-    Private: a mock cache interface that simulates caching.
+    Internal: a mock cache interface that simulates caching.
     """
     data = {}
 
@@ -16,23 +17,24 @@ class DummyContentCache(object):
         return self.data.get(key)
 
     def set(self, key, value):
+        # Cap the data cache to avoid blowing up the memory.
         if len(self.data) > 29:
             self.data = {}
         self.data[key] = value
 
 
 
-
-
-import logging
-
-
 class RedisPermaCache(object):
     """
-    Private: a wrapper around the redis cache, mapping hgetall to get and
-             hmset to set.
+    Internal: a wrapper around the redis cache, mapping `hgetall` to get and
+    `hmset` to set, for convenience. (This way, the loader is less tied to
+    redis and anything that implements `.get` and `.set` in the same way can
+    be used.)
     """
     def __init__(self, redis_client):
+        """
+        redis_client    - a py-redis client that is connected to a redis server
+        """
         self._redis = redis_client
 
     def get(self, key):
@@ -42,9 +44,15 @@ class RedisPermaCache(object):
         self._redis.hmset(key, value)
 
 
+
 class CacheLogger(object):
+    """
+    Internal: a wrapper around the given cache backend, for the purposes of
+    logging the hits and misses.
+    """
     def __init__(self, cache_backend):
         self._backend = cache_backend
+
     def get(self, key):
         val = self._backend.get(key)
         if val:
@@ -54,23 +62,26 @@ class CacheLogger(object):
             print 'miss', key
             logging.debug('Cache miss', extra={'key': key})
         return val
+
     def set(self, key, value):
         self._backend.set(key, value)
         logging.debug('Cache set', extra={'key': key})
 
 
+
 class DataLoader(object):
     """
-    Private: A class that loads the target data from the cache or the API. If
-             the requested object has not been cached, it is retrieved from
-             the content API, then cached. The cache is assumed to be a
-             key-value datastore that can store hashes (redis).
+    Internal: A class that loads the target data from the cache or the API. If
+    the requested object has not been cached, it is retrieved from the content
+    API, then cached. The cache is assumed to be a key-value datastore that
+    can store hashes (eg, redis).
 
-             Objects are cached with a soft expiry, enforced at the
-             application level, so that if the expiration time has passed, the
-             object is re-fetched from the content API. However, the object is
-             not expiry cleared from the cache upon expiry, in case the
-             content API is unreachable.
+    Objects are cached with a soft expiry, enforced at the application level,
+    so that if the expiration time has passed, the object is re-fetched from
+    the content API. However, the object is not cleared from the cache upon
+    expiry, in case the content API is unreachable. The objects are recorded
+    using the time stored, so the staleness can be adjusted even after the
+    object was cached.
     """
     def __init__(self, cache_backend=None, content_backend=None, stale_after=None):
         if not stale_after:
@@ -115,9 +126,12 @@ class DataLoader(object):
 
     def _load_from_api(self, **kwargs):
         """
-        Private: load the target object from the Content API using the
-                 specified slug. If the object is found and a cache_backend
-                 was specified, the object's JSON representation is cached. 
+        Internal: load the target object from the Content API using the
+        specified slug. If the object is found and a cache_backend was
+        specified, the object's JSON str representation is cached. 
+
+        If more than one object matches, None is returned and the error is
+        logged.
 
         Returns a Container, or None.
         """
@@ -127,8 +141,8 @@ class DataLoader(object):
             logging.debug('Object found', extra=kwargs)
             if self._cache:
                 self._cache.set(kwargs_to_key(kwargs), {
-                        'stored_at': datetime.utcnow().strftime('%s'),
-                        'object': obj.toJSON(),
+                        'stored_at' : datetime.utcnow().strftime('%s'),
+                        'object'    : obj.toJSON(),
                     })
         else:
             if obj:
@@ -139,29 +153,11 @@ class DataLoader(object):
         return obj
 
 
+
 def kwargs_to_key(kwargs):
     if 'short_name' in kwargs:
         return "short_name:{short_name}".format(**kwargs)
     return "slug:{slug}".format(**kwargs)
-
-
-
-
-        # obj = self._cache.get(slug)
-        # if obj:
-        #     print 'was cached!'
-        #     obj = json.loads(obj)
-        # else:
-        #     print 'uncached, getting from API'
-        #     obj = content_objects.filter(type=Container, slug=slug)
-        #     if len(obj) > 0:
-        #         obj = obj[0]
-        #         content_cache.set(slug, obj.toJSON())
-        #         print 'added to cache'
-        #     else:
-        #         print 'not found'
-        #         obj = None
-        # return Container(obj)
 
 
 
@@ -173,7 +169,7 @@ else:
 # Single-user/single-app application, so we can just have a single API instance.
 content_objects = ContentObjects(
         settings.CONTENT_API_TOKEN,
-        api_root=settings.CONTENT_API_ROOT
+        api_root = settings.CONTENT_API_ROOT,
     )
 
 data_loader = DataLoader(

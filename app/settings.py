@@ -1,7 +1,15 @@
-import os, subprocess
+"""
+Load the configuration specified in the environment into names for use
+elsewhere in the app. 
+"""
+
+import os
+
+
 
 PROJECT_DIR = os.path.dirname(os.path.realpath(__file__))
 
+# The minimum necessary configuration to run the app.
 REQUIRED_ENV = [
     'CONTENT_API_TOKEN',
     'CONTENT_API_ROOT',
@@ -11,8 +19,9 @@ REQUIRED_ENV = [
     'PUBLICATION_SHORT_NAME',
 ]
 
+# Load any additional configuration from an .env file if the environment
+# doesn't already have everything required.
 remaining_env_variables = set(REQUIRED_ENV)
-
 if not set(REQUIRED_ENV).issubset(os.environ):
     try:
         f = open('.env', 'r')
@@ -31,7 +40,13 @@ if not set(REQUIRED_ENV).issubset(os.environ):
             if var in remaining_env_variables:
                 remaining_env_variables.remove(var)
     if len(remaining_env_variables) > 0:
-        raise AttributeError('You are missing the following env variables: {0}'.format(remaining_env_variables))
+        raise AttributeError('You are missing the following env variables: {0}'.format(
+                    ', '.join(sorted(list(remaining_env_variables)))
+                ))
+
+
+
+# Some helpers for converting the environment values to the Python equivalent.
 
 def asBool(var_name, default=None):
     if var_name in os.environ:
@@ -42,6 +57,8 @@ def asInt(var_name, default=None):
     if var_name in os.environ:
         return int(os.environ.get(var_name))
     return default
+
+
 
 # App config
 PORT                    = asInt('PORT', 5000)
@@ -56,6 +73,6 @@ STATIC_URL              = os.environ['STATIC_URL']
 # Content API config
 CONTENT_API_TOKEN       = os.environ['CONTENT_API_TOKEN']
 CONTENT_API_ROOT        = os.environ['CONTENT_API_ROOT']
-CACHE_SOFT_EXPIRY       = int(os.environ['CACHE_SOFT_EXPIRY'])
+CACHE_SOFT_EXPIRY       = int(os.environ['CACHE_SOFT_EXPIRY'])  # minutes
 PUBLICATION_SHORT_NAME  = os.environ['PUBLICATION_SHORT_NAME']
 PUBLICATION_NAME        = os.environ.get('PUBLICATION_NAME', u'')
