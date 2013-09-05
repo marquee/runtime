@@ -17,9 +17,11 @@
         {% block content %}
 
             <div id="site-header">
-                <a class="logo" href="{{ url_for('index') }}">{{ publication.title }}</a>
-                <nav id="site-nav">
-                </nav>
+                {% block site_header %}
+                    <a class="logo" href="{{ url_for('index') }}">{{ publication.title }}</a>
+                    <nav id="site-nav">
+                    </nav>
+                {% endblock %}
             </div>
 
             <div id="view-content">
@@ -27,6 +29,7 @@
             </div>
 
             <footer id="site-footer">
+                {% block site_footer %}{% endblock %}
             </footer>
 
             <script src="http://cdn.droptype.com/params/params-1.0.0-min.js"></script>
