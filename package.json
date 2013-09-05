@@ -2,6 +2,7 @@
   "devDependencies": {
     "aws-sdk": "~1.5.1",
     "coffee-script": "~1.6.x",
+    "execSync": "~1.0.1-pre",
     "fs-extra": "~0.6.x",
     "mime": "~1.2.11",
     "uglify-js": "~2.4.0",
