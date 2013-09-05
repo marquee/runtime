@@ -29,20 +29,11 @@
             <footer id="site-footer">
             </footer>
 
+            <script src="http://cdn.droptype.com/params/params-1.0.0-min.js"></script>
             <script>
-                window.Params = {}
+                window.params = new Params();
                 {% block view_params %}{% endblock %}
             </script>
-
-            <script src="{{ static_url('libs/jquery-1.10.1.min.js') }}"></script>
-            <script src="{{ static_url('libs/underscore-min.js') }}"></script>
-            <script src="{{ static_url('libs/backbone-min.js') }}"></script>
-            {% raw %}<script>
-                _.templateSettings = {
-                    evaluate    : /\{%(.+?)%\}/g,
-                    interpolate : /\{\{(.+?)\}\}/g
-                }
-            </script>{% endraw %}
 
             {% block extra_scripts %}{% endblock %}
 
