@@ -1,2 +1,16 @@
 @import "composer_content/index"
 @import "composer_content/selectors"
+// A hack that provides import-once functionality (really, export-once). To
+// use in a module, put everything that should only be exported once under the
+// exports mixin, with a module name.
+//
+// +exports('Module')
+//    %some-selector
+//        color: blue
+//
+// See: https://github.com/wilsonpage/sass-import-once
+$modules: () !default
+@mixin exports($name)
+    @if (index($modules, $name) == false)
+        $modules: append($modules, $name)
+        @content
