@@ -1,5 +1,3 @@
-@import "composer_content/index"
-@import "composer_content/selectors"
 // A hack that provides import-once functionality (really, export-once). To
 // use in a module, put everything that should only be exported once under the
 // exports mixin, with a module name.
@@ -14,3 +12,10 @@ $modules: () !default
     @if (index($modules, $name) == false)
         $modules: append($modules, $name)
         @content
+
+// Load the Composer styles, using the project-specific theme and the default
+// selectors. (Installed by the Composer Python package.)
+@import "composer_theme"
+@import "composer"
+@import "composer_selectors"
+
