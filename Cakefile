@@ -343,8 +343,6 @@ doBuildScripts = (options={}, callback) ->
 doBuildStyles = (options={}, callback) ->
     console.log 'Building styles'
     compass_command = makeCompassCommand('compile', options)
- 
-    console.log compass_command, compass_command.join(' ')
     executeCommand(compass_command, options, callback)
  
  
