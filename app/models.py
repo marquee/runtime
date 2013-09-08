@@ -124,7 +124,6 @@ class Publication(MContentModel):
         query.update(kwargs)
         query.update({
             'role'                      : ROLES.ISSUE,
-            'published_date__exists'    : True,
         })
 
         # Construct the APIQuery and return the results as Issue objects.
