@@ -66,7 +66,11 @@ class HasCoverContent(object):
 
         return default
 
-
+class Issue(MContentModel, HasCoverContent):
+    """
+    Public: A model that corresponds to a Container with role='issue'.
+    """
+    pass
 
 class Story(MContentModel, HasCoverContent):
     """
@@ -95,6 +99,41 @@ class Publication(MContentModel):
     """
     Public: A model that corresponds to a Container with `role='publication'`.
     """
+
+    def issues(self, *args, **kwargs):
+        """
+        Public: load the Issues that belong to the Publication instance from
+        the API, filtered by the specified arguments.
+
+        args    - (optional) A single dict to use for the query, allowing for
+                    query keys that cannot be used as keywoard arguments.
+
+        kwargs  - (optional) Keyword arguments that are added to the query,
+                    superseding any query specified as a positional argument.
+
+        Note: the query is updated to filter by role and to only include
+        published stories.
+
+        Returns an (iterable, lazy) APIQuery of Story objects.
+        """
+        query = {}
+
+        if len(args) > 0:
+            query.update(args[0])
+
+        query.update(kwargs)
+        query.update({
+            'role'                      : ROLES.ISSUE,
+            'published_date__exists'    : True,
+        })
+
+        # Construct the APIQuery and return the results as Issue objects.
+        issues = content_objects.filter(
+            type=Container, **query
+        ).mapOnExecute(Issue)
+
+        return issues
+
 
     def stories(self, *args, **kwargs):
         """
