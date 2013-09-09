@@ -70,7 +70,21 @@ class Issue(MContentModel, HasCoverContent):
     """
     Public: A model that corresponds to a Container with role='issue'.
     """
-    pass
+
+    def stories(self, *args, **kwargs):
+        """
+        Public: returns all stories that belong to the Issue
+
+        Returns an APIQuery containing instances of Story objects for
+        every story in an issue.
+        """
+
+        stories = content_objects.filter(
+            issue_content=self.id
+        ).mapOnExecute(Story)
+
+        return stories
+
 
 class Story(MContentModel, HasCoverContent):
     """
