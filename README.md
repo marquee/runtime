@@ -1,4 +1,4 @@
-# Marquee Offsite Publication
+# Marquee Runtime
 
 
 
@@ -32,14 +32,14 @@
 
    In `.env`:
 
-   * `CONTENT_API_TOKEN` - A read-only [ApplicationToken](http://marquee.by/admin/applications/applicationtoken/)
+   * `CONTENT_API_TOKEN` - A read-only ApplicationToken issued by Marquee.
    * `PUBLICATION_NAME` - Arbitrary project name
    * `PUBLICATION_SHORT_NAME` - The short name, used to prefix the asset uploads
 
    In `.env-development`:
 
-   * `AWS_ACCESS_KEY_ID` - from [`Dropbox/Dev/custom-layout-developers-credentials.csv`](https://www.dropbox.com/home/Dev)
-   * `AWS_SECRET_ACCESS_KEY` -      ’’
+   * `AWS_ACCESS_KEY_ID`
+   * `AWS_SECRET_ACCESS_KEY`
 
    (They are in separate files to keep credentials that have write access
    segregated. The `.env` file MUST NOT ever contain API tokens or Access
