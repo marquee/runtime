@@ -6,7 +6,7 @@
 
 1. Clone the boilerplate template and install dev dependencies:
 
-   `$ git clone git@git.droptype.com:offsite-publication-boilerplate.git <project_name>`
+   `$ git clone git@github.com:marquee/runtime.git <project_name>`
    `$ cd <project_name>`
 
    *(If it’s a pre-existing project, clone from the project repo instead.)*
