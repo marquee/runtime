@@ -1,4 +1,4 @@
--e git://github.com/droptype/composer.git#egg=composer
+-e git://github.com/marquee/composer.git#egg=composer
  
 Flask==0.9
 Jinja2==2.6
