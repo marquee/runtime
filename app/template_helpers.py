@@ -184,7 +184,7 @@ def render_cover(eval_ctx, obj):
     cover_type = None
     context = {}
 
-    if obj.cover_content:
+    if obj and obj.cover_content:
         if hasattr(obj.cover_content, 'type'):
             # Only render the cover if it actually has content set.
             if obj.cover_content.content:
@@ -204,9 +204,9 @@ def render_cover(eval_ctx, obj):
                 '640': img.content.get('640', {}).get('url'),
             } for img in obj.cover_content.content]
 
-    if cover_type:
-        template = app.jinja_env.get_template('includes/cover_{0}.html'.format(cover_type))
-        return template.render(context)
+        if cover_type:
+            template = app.jinja_env.get_template('includes/cover_{0}.html'.format(cover_type))
+            return template.render(context)
     return u''
 app.jinja_env.filters['render_cover'] = render_cover
 
