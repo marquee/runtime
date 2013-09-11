@@ -55,6 +55,16 @@ def to_item_size(count):
     
     count - the int count of items
     
+    Examples
+
+        {% set stories=publication.stories().limit(4) %}
+        {% for story in stories %}
+            <div class="item-{{ stories|to_item_size }}">
+                ...
+            </div>
+        {% endfor %}
+
+
     Returns the str size name.
     """
 
@@ -95,6 +105,12 @@ def content_preview(eval_ctx, story, char_limit=400):
 
     story         - the Story to preview
     char_limit    - (optional:400) the int number of characters to show
+
+    Examples
+
+        {{ story|content_preview }}
+
+        {{ story|content_preview(char_limit=200) }}
 
     Returns a str of HTML up to `char_limit` content characters long (count
     doesn't include markup).

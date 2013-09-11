@@ -33,6 +33,7 @@ class HasCoverContent(object):
     """
     Private: mixin that adds cover content accessors.
     """
+
     def cover(self, size='640'):
         """
         Public: return the URL for the specified image size, or '' if the
@@ -66,6 +67,8 @@ class HasCoverContent(object):
 
         return default
 
+
+
 class Issue(MContentModel, HasCoverContent):
     """
     Public: A model that corresponds to a Container with role='issue'.
@@ -84,6 +87,7 @@ class Issue(MContentModel, HasCoverContent):
         ).mapOnExecute(Story)
 
         return stories
+
 
 
 class Story(MContentModel, HasCoverContent):
