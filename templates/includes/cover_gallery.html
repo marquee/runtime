@@ -1,0 +1,5 @@
+<div class="item-full">
+    <div class="item_cover" data-cover_type="gallery" data-cover_urls="{{ cover_urls|tojson }}"
+        {% if cover_urls[0] %}style="background-image: url({{ cover_urls[0]['1280'] }})"{% endif %}>
+    </div>
+</div>

@@ -159,3 +159,55 @@ def content_preview(eval_ctx, story, char_limit=400):
 
     return content_preview
 app.jinja_env.filters['content_preview'] = content_preview
+
+
+
+@evalcontextfilter
+def render_cover(eval_ctx, obj):
+    """
+    Public: a filter that renders the cover content for a given content object
+    The type of cover is determined by the `cover_content` property, and the
+    correct template is loaded from the `templates/includes/` folder.
+
+    eval_ctx - the template EvaluationContext (provided automatically)
+    obj      - the ContentObject that has cover content (Story, Issue, or
+                 Category)
+
+    Examples
+
+        {{ story|render_cover }}
+
+    Returns a unicode HTML fragment, or empty string.
+    """
+    from content import Image, Embed
+
+    cover_type = None
+    context = {}
+
+    if obj.cover_content:
+        if hasattr(obj.cover_content, 'type'):
+            # Only render the cover if it actually has content set.
+            if obj.cover_content.content:
+                if obj.cover_content.type == Image.type:
+                    cover_type = 'image'
+                    context['cover_urls'] = {
+                        '1280': obj.cover_content.content.get('1280', {}).get('url'),
+                        '640': obj.cover_content.content.get('640', {}).get('url'),
+                    }
+                elif obj.cover_content.type == Embed.type:
+                    cover_type = 'embed'
+                    context['embed_url'] = obj.cover_content.content
+        else:
+            cover_type = 'gallery'
+            context['cover_urls'] = [{
+                '1280': img.content.get('1280', {}).get('url'),
+                '640': img.content.get('640', {}).get('url'),
+            } for img in obj.cover_content.content]
+
+    if cover_type:
+        template = app.jinja_env.get_template('includes/cover_{0}.html'.format(cover_type))
+        return template.render(context)
+    return u''
+app.jinja_env.filters['render_cover'] = render_cover
+
+

@@ -2,6 +2,10 @@
 
 {% block view_content %}
 
+    {% set story=story.published %}
+
+    {{ story|render_cover }}
+
     <h1>{{ story.title }}</h1>
 
     {% for block in story.content %}
