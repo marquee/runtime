@@ -189,9 +189,10 @@ def modelFromRole(content_obj):
 
     content_obj - the Container to wrap in the model.
 
-    Returns a Story or Publication instance.
+    Returns an Issue, Story, or Publication instance.
     """
     mapping = {
+        ROLES.ISSUE         : Issue,
         ROLES.STORY         : Story,
         ROLES.PUBLICATION   : Publication,
     }
