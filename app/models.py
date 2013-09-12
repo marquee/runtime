@@ -34,12 +34,15 @@ class HasCoverContent(object):
     Private: mixin that adds cover content accessors.
     """
 
-    def cover(self, size='640'):
+    def cover(self, size='640', as_obj=False):
         """
         Public: return the URL for the specified image size, or '' if the
-        object doesn't have a cover_content image of that size.
+        object doesn't have a cover_content image of that size. If the cover
+        is a gallery or embed type, returns the first image or fallback image,
+        respectively.
 
-        size - (optional: '640') The int or str size to select.
+        size    - (optional: '640') The int or str size to select.
+        as_obj  - (optional: False) If True, returns the whole image object.
 
         Returns the string URL of the image.
         """
@@ -50,21 +53,31 @@ class HasCoverContent(object):
             return default
 
         asset = None
+        image_obj = None
 
-        size = str(size)
+        if isinstance(self.cover_content, list) and len(self.cover_content) > 0:
+            image_obj = self.cover_content[0]
+        elif isinstance(self.cover_content, dict) and 'image' in self.cover_content:
+            image_obj = self.cover_content['image']
+        else:
+            image_obj = self.cover_content
 
-        if size == '640':
-            asset = self.cover_content['content'].get('640', {})
 
-        elif size == '1280':
-            asset = self.cover_content['content'].get('1280', {})
+        if image_obj:
+            size = str(size)
+            if size == '640':
+                asset = image_obj['content'].get('640', {})
 
-        elif size == 'original':
-            asset = self.cover_content['content'].get('original', {})
+            elif size == '1280':
+                asset = image_obj['content'].get('1280', {})
 
-        if asset:
-            return asset.get('url', default)
+            elif size == 'original':
+                asset = image_obj.get('original', {})
 
+            if asset:
+                if as_obj:
+                    return asset
+                return asset.get('url', default)
         return default
 
 
