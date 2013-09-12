@@ -2,7 +2,10 @@ from app        import app
 from cgi        import escape
 from composer   import renderBlock
 from content    import Text
+from content.models     import instanceFromRaw
 from jinja2     import evalcontextfilter, Markup
+
+from .models    import modelFromRole
 
 import settings
 
@@ -222,3 +225,17 @@ def render_cover(eval_ctx, obj):
 app.jinja_env.filters['render_cover'] = render_cover
 
 
+
+@evalcontextfilter
+def asModel(eval_ctx, obj_dict):
+    """
+    Public: a filter that converts a dict to one of the above models.
+
+    obj_dict - the dict to convert
+
+    Returns the Story, Issue, or Category version
+    """
+    content_object = instanceFromRaw(obj_dict)
+    model = modelFromRole(content_object)
+    return model
+app.jinja_env.filters['asModel'] = asModel
