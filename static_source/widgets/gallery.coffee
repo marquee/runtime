@@ -94,7 +94,7 @@ class Gallery
                 top: height * 0.1
                 left: i * width * 0.8
             @_$slider.append($image)
-        @_transitionSlider
+        @_transitionSlider()
         
 
     _transitionSlider: ->
@@ -102,6 +102,10 @@ class Gallery
         console.log 'new left', width * 0.1 + width * 0.8 * @_current_i
         @_$slider.css
             left: width * 0.1 - width * 0.8 * @_current_i
+        @_$slider.find('.Gallery_image[data-active]').removeAttr('data-active')
+        console.log $(@_$slider.find('.Gallery_image')[@_current_i])
+        $(@_$slider.find('.Gallery_image')[@_current_i]).attr('data-active', true)
 
 
 $('[data-cover_type="gallery"]').each (i, el) -> new Gallery(el)
+
