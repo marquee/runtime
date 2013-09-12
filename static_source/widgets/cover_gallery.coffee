@@ -4,10 +4,43 @@ console.log 'gallery.coffee'
 # in-place. Slider transitions between the images by sliding them. To set the
 # mode, set the `data-gallery_mode` on the cover el to `"static"` or `"slider"`.
 
+# Debounce from http://underscorejs.org/
+`
+ debounce = function(func, wait, immediate) {
+    var timeout, args, context, timestamp, result;
+    return function() {
+      context = this;
+      args = arguments;
+      timestamp = new Date();
+      var later = function() {
+        var last = (new Date()) - timestamp;
+        if (last < wait) {
+          timeout = setTimeout(later, wait - last);
+        } else {
+          timeout = null;
+          if (!immediate) result = func.apply(context, args);
+        }
+      };
+      var callNow = immediate && !timeout;
+      if (!timeout) {
+        timeout = setTimeout(later, wait);
+      }
+      if (callNow) result = func.apply(context, args);
+      return result;
+    };
+  };
+`
+
+
 class Gallery
     constructor: (el) ->
         @$el = $(el)
-        @_urls = JSON.parse(@$el.attr('data-cover_urls'))
+        urls = JSON.parse(@$el.attr('data-cover_urls'))
+        @_urls = []
+        for url in urls
+            if url['1280']
+                @_urls.push(url)
+
         @_mode = @$el.attr('data-gallery_mode')
         if not @_mode
             @_mode = 'static'
@@ -15,7 +48,7 @@ class Gallery
 
         if @_urls.length > 1
             @_configureEl()
-            $(window).on('resize', @_configureEl)
+            $(window).on('resize', debounce(@_configureEl) ,50)
 
     next: =>
         @_current_i += 1
@@ -38,6 +71,7 @@ class Gallery
                 @_transitionSlider()
 
     _configureEl: =>
+        console.log '_configureEl'
         switch @_mode
             when 'static'
                 @_configureStatic()
@@ -62,10 +96,8 @@ class Gallery
                 top: top
 
 
-
     _configureStatic: ->
     _transitionStatic: ->
-        console.log '_transitionStatic', @_urls, @_current_i
         @$el.css
             'background-image': "url(#{ @_urls[@_current_i]['1280'] })"
 
@@ -99,11 +131,9 @@ class Gallery
 
     _transitionSlider: ->
         width = @$el.width()
-        console.log 'new left', width * 0.1 + width * 0.8 * @_current_i
         @_$slider.css
             left: width * 0.1 - width * 0.8 * @_current_i
         @_$slider.find('.Gallery_image[data-active]').removeAttr('data-active')
-        console.log $(@_$slider.find('.Gallery_image')[@_current_i])
         $(@_$slider.find('.Gallery_image')[@_current_i]).attr('data-active', true)
 
 
