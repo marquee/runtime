@@ -1,6 +1,10 @@
 
-_buildIframeEmbed = (url) ->
-    return "<iframe src='#{ url }' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"
+_buildIframeEmbed = (url, attrs={}) ->
+    attributes = []
+    for k, v of attrs
+        attributes.push("k='#{ v }'")
+    attributes = attributes.join(' ')
+    return "<iframe src='#{ url }' frameborder='0' #{ attributes } webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"
 
 class EmbedCover
     constructor: (el) ->
@@ -40,7 +44,7 @@ class EmbedCover
         console.log hostname
         switch hostname
             when 'youtube.com'
-                embed = _buildIframeEmbed("http://www.youtube.com/embed/#{ url.query(true).v }")
+                embed = _buildIframeEmbed("http://www.youtube.com/embed/#{ @_url.query(true).v }?controls=0&modestbranding=1&showinfo=0")
             when 'vimeo.com'
                 embed = _buildIframeEmbed("#{ @_url.protocol() }://player.vimeo.com/video#{ @_url.path() }")
         if embed
