@@ -194,7 +194,7 @@ def render_cover(eval_ctx, obj):
             } for img in obj.cover_content]
         else:
             # Only render the cover if it actually has content set.
-            if obj.cover_content.get('type') == Image.type and obj.cover_content.get('content'):
+            if getattr(obj.cover_content, 'type', None) == Image.type and obj.cover_content.get('content'):
                 cover_type = 'image'
                 context['cover_urls'] = {
                     '1280': obj.cover_content.get('content').get('1280', {}).get('url'),
