@@ -201,9 +201,11 @@ def render_cover(eval_ctx, obj):
                     '640': obj.cover_content.get('content').get('640', {}).get('url'),
                 }
             elif hasattr(obj.cover_content, 'get'):
-                if obj.cover_content.get('embed', {}).get('content'):
-                    context['embed_url'] = obj.cover_content['embed'].get('content')
-                if obj.cover_content.get('image', {}).get('content'):
+                context['cover_urls'] = {}
+                context['embed_url'] = ''
+                if obj.cover_content.get('embed'):
+                    context['embed_url'] = obj.cover_content['embed'].get('content', '')
+                if obj.cover_content.get('image'):
                     context['cover_urls'] = {
                         '1280': obj.cover_content['image'].get('content').get('1280', {}).get('url'),
                         '640': obj.cover_content['image'].get('content').get('640', {}).get('url'),

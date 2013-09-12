@@ -1,0 +1,56 @@
+
+_buildIframeEmbed = (url) ->
+    return "<iframe src='#{ url }' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>"
+
+class EmbedCover
+    constructor: (el) ->
+        @$el = $(el)
+
+        url = @$el.attr('data-embed_url')
+        if url
+            @_url = URI(url)
+            if not @_url.protocol()
+                @_url = URI("http://#{ url }")
+            if not @_url.hostname()
+                @_url = null
+
+        if @_url
+            @_buildEmbed()
+        else
+            @_buildFallback()
+
+
+    _buildFallback: ->
+        try
+            cover_urls = JSON.parse(@$el.attr('data-cover_urls'))
+        catch e
+            console.error(e)
+        if cover_urls
+            @$el.css
+                'background-image': "url(#{ cover_urls['1280'] })"
+        else
+            @$el.remove()
+
+
+    _buildEmbed: ->
+        hostname = @_url.hostname().split('.')
+        if hostname[0] is 'www'
+            hostname.shift()
+        hostname = hostname.join('.')
+        console.log hostname
+        switch hostname
+            when 'youtube.com'
+                embed = _buildIframeEmbed("http://www.youtube.com/embed/#{ url.query(true).v }")
+            when 'vimeo.com'
+                embed = _buildIframeEmbed("#{ @_url.protocol() }://player.vimeo.com/video#{ @_url.path() }")
+        if embed
+            @_renderEmbed(embed)
+
+
+    _renderEmbed: (embed) ->
+        @$el.addClass('EmbedCover')
+        @$el.append(embed)
+
+
+$('[data-cover_type="embed"]').each (i, el) ->
+    new EmbedCover(el)
