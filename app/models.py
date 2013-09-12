@@ -111,6 +111,18 @@ class Story(MContentModel, HasCoverContent):
             return Story(Container(self._container._published_json[0]))
         return None
 
+    def related_stories(self, *args, **kwargs):
+        """
+        Public: returns stories marked as related to the current Story
+
+        Returns an APIQuery containing instance of Story objects.
+        """
+
+        related_stories = content_objects.filter(
+            related_content=self.id
+        ).mapOnExecute(Story)
+
+        return related_stories
 
 
 class Publication(MContentModel):
