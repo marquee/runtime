@@ -101,6 +101,19 @@ class Issue(MContentModel, HasCoverContent):
 
         return stories
 
+class Category(object):
+
+    def __init__(self, category_dict):
+        self.slug   = category_dict['slug']
+        self.title  = category_dict['title']
+
+
+    def stories(self, *args, **kwargs):
+        stories = content_objects.filter(
+            category__slug=self.slug
+        ).mapOnExecute(Story)
+
+        return stories
 
 
 class Story(MContentModel, HasCoverContent):
