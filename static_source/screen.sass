@@ -13,10 +13,10 @@ $modules: () !default
         $modules: append($modules, $name)
         @content
 
+@import "widgets/cover_gallery"
 // Load the Composer styles, using the project-specific theme and the default
 // selectors. (Installed by the Composer Python package.)
 @import "composer_theme"
 @import "composer"
 @import "composer_selectors"
 
-@import "widgets/gallery"
