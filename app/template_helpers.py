@@ -51,13 +51,16 @@ app.jinja_env.globals.update(media_url=media_url)
 
 
 
-def to_item_size(count):
+def to_item_size(count, floor=1, ceiling=5):
     """
     Public: filter that converts a count of items to the appropriate size for
     [Formwork](https://github.com/droptype/formwork)'s `.item-` variants.
     
-    count - the int count of items
-    
+    count       - the int count of items
+    floor       - (optional: 1) the lowest number to use (for ensuring a
+                    maximum size)
+    ceiling     - (optional: 5) the highest number to use (for ensuring a
+                    minimum size)
     Examples
 
         {% set stories=publication.stories().limit(4) %}
@@ -67,9 +70,20 @@ def to_item_size(count):
             </div>
         {% endfor %}
 
+        {% set stories=publication.stories().limit(8) %}
+        {% for story in stories %}
+            <div class="item-{{ stories|to_item_size(floor=2, ceiling=4) }}">
+                ...
+            </div>
+        {% endfor %}
 
     Returns the str size name.
     """
+
+    if count < floor:
+        count = floor
+    elif count > ceiling:
+        count = ceiling
 
     size_map = {
         1: 'full',
