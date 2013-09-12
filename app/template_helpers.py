@@ -183,31 +183,40 @@ def render_cover(eval_ctx, obj):
 
     cover_type = None
     context = {}
+    result = u''
 
     if obj and obj.cover_content:
-        if hasattr(obj.cover_content, 'type'):
-            # Only render the cover if it actually has content set.
-            if obj.cover_content.content:
-                if obj.cover_content.type == Image.type:
-                    cover_type = 'image'
-                    context['cover_urls'] = {
-                        '1280': obj.cover_content.content.get('1280', {}).get('url'),
-                        '640': obj.cover_content.content.get('640', {}).get('url'),
-                    }
-                elif obj.cover_content.type == Embed.type:
-                    cover_type = 'embed'
-                    context['embed_url'] = obj.cover_content.content
-        else:
+        if isinstance(obj.cover_content, list):
             cover_type = 'gallery'
             context['cover_urls'] = [{
-                '1280': img.content.get('1280', {}).get('url'),
-                '640': img.content.get('640', {}).get('url'),
-            } for img in obj.cover_content.content]
+                '1280': img.get('content', {}).get('1280', {}).get('url'),
+                '640': img.get('content', {}).get('640', {}).get('url'),
+            } for img in obj.cover_content]
+        else:
+            # Only render the cover if it actually has content set.
+            if obj.cover_content.get('type') == Image.type and obj.cover_content.get('content'):
+                cover_type = 'image'
+                context['cover_urls'] = {
+                    '1280': obj.cover_content.get('content').get('1280', {}).get('url'),
+                    '640': obj.cover_content.get('content').get('640', {}).get('url'),
+                }
+            elif hasattr(obj.cover_content, 'get'):
+                if obj.cover_content.get('embed', {}).get('content'):
+                    context['embed_url'] = obj.cover_content['embed'].get('content')
+                if obj.cover_content.get('image', {}).get('content'):
+                    context['cover_urls'] = {
+                        '1280': obj.cover_content['image'].get('content').get('1280', {}).get('url'),
+                        '640': obj.cover_content['image'].get('content').get('640', {}).get('url'),
+                    }
+                if len(context) > 0:
+                    cover_type = 'embed'
 
         if cover_type:
             template = app.jinja_env.get_template('includes/cover_{0}.html'.format(cover_type))
-            return template.render(context)
-    return u''
+            result = template.render(context)
+    if eval_ctx.autoescape:
+        result = Markup(result)
+    return result
 app.jinja_env.filters['render_cover'] = render_cover
 
 
