@@ -1,0 +1,20 @@
+@import "compass/css3"
+
+.Gallery_slider
+    position: absolute
+    top: 0
+    +transition-property('left')
+    +transition-duration('0.2s')
+.Gallery_image
+    position: absolute
+    +background-size(cover)
+    background-position: center
+    background-repeat: no-repeat
+
+.Gallery_button
+    position: absolute
+
+.Gallery_button-prev
+    left: 0
+.Gallery_button-next
+    right: 0
