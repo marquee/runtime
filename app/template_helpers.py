@@ -135,7 +135,7 @@ def content_preview(eval_ctx, story, char_limit=400):
     # Default to an empty string since this is for a template.
     content_preview = u''
 
-    if story.description:
+    if hasattr(story, 'description'):
         content_preview = description[:char_limit]
         if len(description) > char_limit:
             content_preview += '&hellip;'
