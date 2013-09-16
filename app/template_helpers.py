@@ -136,8 +136,8 @@ def content_preview(eval_ctx, story, char_limit=400):
     content_preview = u''
 
     if hasattr(story, 'description'):
-        content_preview = description[:char_limit]
-        if len(description) > char_limit:
+        content_preview = story.description[:char_limit]
+        if len(story.description) > char_limit:
             content_preview += '&hellip;'
 
     else:
