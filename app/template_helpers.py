@@ -207,7 +207,7 @@ def render_cover(eval_ctx, obj):
     context = {}
     result = u''
 
-    if obj and obj.cover_content:
+    if obj and hasattr(obj, 'cover_content'):
         if isinstance(obj.cover_content, list):
             cover_type = 'gallery'
             context['cover_urls'] = [{
