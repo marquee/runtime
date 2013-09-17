@@ -137,7 +137,7 @@ def content_preview(eval_ctx, story, char_limit=400):
     generate_preview = True
 
     if hasattr(story, 'description'):
-        if story.description == '':
+        if story.description == '' or story.description is None:
             generate_preview = True
         else:
             generate_preview = False
