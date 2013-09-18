@@ -116,7 +116,7 @@ class Gallery
         @_$slider.css
             height: height
             width: width * @_urls.length
-            left: width * 0.1
+            left: 0.125 * width
         $.each @_urls, (i, img) =>
             $image = $('<div class="Gallery_image"></div>')
             $image.css
@@ -127,15 +127,14 @@ class Gallery
                 left: i * width * 0.8
             @_$slider.append($image)
         @_transitionSlider()
-        
+
 
     _transitionSlider: ->
         width = @$el.width()
         @_$slider.css
-            left: width * 0.1 - width * 0.8 * @_current_i
+            left: width * 0.125 - width * 0.8 * @_current_i
         @_$slider.find('.Gallery_image[data-active]').removeAttr('data-active')
         $(@_$slider.find('.Gallery_image')[@_current_i]).attr('data-active', true)
-
 
 $('[data-cover_type="gallery"]').each (i, el) -> new Gallery(el)
 
