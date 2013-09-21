@@ -114,7 +114,7 @@ class DataLoader(object):
                 if datetime.utcnow() - object_stored_at > stale_after:
                     # It has expired, so try getting it from the API instead.
                     target_object = self._load_from_api(**kwargs)
-                else:
+                if not target_object:
                     # Convert the cached JSON to a Container.
                     target_object = Container(json.loads(cached_object['object']))
 
