@@ -16,6 +16,7 @@
         <meta property="og:url" content="{% block og_url %}<script>document.write(document.location.href);</script>{% endblock %}">
         <meta property="og:site_name" content="{% block og_site_name %}{{ publication.name }}{% endblock %}">
         <meta property="og:type" content="{% block og_type %}{% endblock %}">
+        <meta property="twitter:card" content="{% block twitter_card_type %}summary_large_image{% endblock %}">
     </head>
     <body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
 
