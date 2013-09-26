@@ -1,5 +1,5 @@
 from app        import app
-from cgi        import escape
+from cgi        import escape as cgi_escape
 from composer   import renderBlock
 from content    import Text
 from content.models     import instanceFromRaw
@@ -115,19 +115,25 @@ app.jinja_env.filters['render_block'] = render_block
 
 
 @evalcontextfilter
-def content_preview(eval_ctx, story, char_limit=400):
+def content_preview(eval_ctx, story, char_limit=400, text_only=False, escape=True):
     """
     Public: a filter that generates a content preview for a Story. Uses the
             description of the Story, if it has one, or the text content.
 
     story         - the Story to preview
     char_limit    - (optional:400) the int number of characters to show
+    text_only     - (optional:False) a Boolean flag indicating that the result
+                    should not be wrapped in spans
+    escape        - (optional:True) escape HTML entities in the text_only
+                    content output
 
     Examples
 
         {{ story|content_preview }}
 
         {{ story|content_preview(char_limit=200) }}
+
+        {{ story|content_preview(text_only=True) }}
 
     Returns a str of HTML up to `char_limit` content characters long (count
     doesn't include markup).
@@ -143,7 +149,10 @@ def content_preview(eval_ctx, story, char_limit=400):
             generate_preview = False
             content_preview = story.description[:char_limit]
             if len(story.description) > char_limit:
-                content_preview += '&hellip;'
+                if text_only:
+                    content_preview += u'…'
+                else:
+                    content_preview += '&hellip;'
 
     if generate_preview:
         content_preview_text_length = 0
@@ -163,16 +172,24 @@ def content_preview(eval_ctx, story, char_limit=400):
                     # Keep track of the preview length.
                     content_preview_text_length += len(content)
 
-                    # Escape after, so character count doesn't include markup.
-                    content = escape(content)
-
-                    # Add an ellipsis to the content to append if over the limit.
-                    if content_preview_text_length >= char_limit:
-                        content += '&hellip;'
+                    if escape:
+                        # Escape after, so character count doesn't include markup.
+                        content = cgi_escape(content, quote=True)
 
                     # Wrap the iteration's snippet in a tag that indicates the
                     # role, to allow for styling.
-                    content_preview += u" <span data-role='{0}'>{1}</span>".format(block.role, content)
+                    if text_only:
+                        content_preview += u"{0} ".format(content)
+                    else:
+                        content_preview += u" <span data-role='{0}'>{1}</span>".format(block.role, content)
+
+                    # Add an ellipsis to the content to append if over the limit.
+                    if content_preview_text_length >= char_limit:
+                        if text_only and not escape:
+                            content_preview += u'…'
+                        else:
+                            content_preview += '&hellip;'
+
                     if content_preview_text_length >= char_limit:
                         break
 
