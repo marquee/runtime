@@ -11,6 +11,11 @@
         <link rel="stylesheet" type="text/css" href="http://cdn.droptype.com/formwork/formwork-0.1.0-min.css">
         <link rel="stylesheet" href="{{ static_url('screen.css') }}" type="text/css">
         <link rel="icon" href="{{ static_url('favicon.png') }}" type="image/png">
+        <meta property="og:image" content="{% block og_image %}{% endblock %}">
+        <meta property="og:title" content="{% block og_title %}{{ publication.name }}{% endblock %}">
+        <meta property="og:url" content="{% block og_url %}<script>document.write(document.location.href);</script>{% endblock %}">
+        <meta property="og:site_name" content="{% block og_site_name %}{{ publication.name }}{% endblock %}">
+        <meta property="og:type" content="{% block og_type %}{% endblock %}">
     </head>
     <body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
 
