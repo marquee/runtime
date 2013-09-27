@@ -12,4 +12,6 @@ app = Flask(
         static_folder   = '../static',
     )
 
+app.jinja_env.add_extension('app.template_extensions.CDNTagExtension')
+
 app.config.from_object(settings)

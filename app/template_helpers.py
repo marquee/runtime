@@ -1,3 +1,4 @@
+# coding: utf-8
 from app        import app
 from cgi        import escape as cgi_escape
 from composer   import renderBlock
@@ -9,7 +10,7 @@ from .models    import modelFromRole
 
 import settings
 
-
+from flask import request
 
 # Add various items to the template globals
 app.jinja_env.globals.update(ENVIRONMENT=settings.ENVIRONMENT)
