@@ -13,6 +13,12 @@ $modules: () !default
         $modules: append($modules, $name)
         @content
 
+@mixin standard-icon($image_path, $size: 100%)
+    background-image: inline-image($image_path)
+    background-position: center center
+    background-size: $size
+    background-repeat: no-repeat
+
 @import "widgets/cover_gallery"
 @import "widgets/cover_embed"
 
@@ -22,3 +28,7 @@ $modules: () !default
 @import "composer"
 @import "composer_selectors"
 
+@import "header"
+@import "footer"
+@import "index"
+@import "story"

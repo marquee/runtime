@@ -11,31 +11,21 @@
         <link rel="stylesheet" type="text/css" href="http://cdn.droptype.com/formwork/formwork-0.1.0-min.css">
         <link rel="stylesheet" href="{{ static_url('screen.css') }}" type="text/css">
         <link rel="icon" href="{{ static_url('favicon.png') }}" type="image/png">
-        <meta property="og:image" content="{% block og_image %}{% endblock %}">
-        <meta property="og:title" content="{% block og_title %}{{ publication.name }}{% endblock %}">
-        <meta property="og:url" content="{% block og_url %}<script>document.write(document.location.href);</script>{% endblock %}">
-        <meta property="og:site_name" content="{% block og_site_name %}{{ publication.name }}{% endblock %}">
-        <meta property="og:type" content="{% block og_type %}{% endblock %}">
-        <meta property="twitter:card" content="{% block twitter_card_type %}summary_large_image{% endblock %}">
     </head>
     <body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
 
         {% block content %}
 
-            <div id="site-header">
-                {% block site_header %}
-                    <a class="logo" href="{{ url_for('index') }}">{{ publication.title }}</a>
-                    <nav id="site-nav">
-                    </nav>
-                {% endblock %}
+            <div id="site-header" class="container-full">
+                {% block site_header %}{% include "header.html" %}{% endblock %}
             </div>
 
-            <div id="view-content">
+            <div id="view-content" class="container-full">
                 {% block view_content %}{% endblock %}
             </div>
 
-            <footer id="site-footer">
-                {% block site_footer %}{% endblock %}
+            <footer id="site-footer" class="container-full">
+                {% block site_footer %}{% include "footer.html" %}{% endblock %}
             </footer>
 
             <script src="http://cdn.droptype.com/params/params-1.1.0-min.js"></script>

@@ -1,0 +1,65 @@
+@import 'shared/colors'
+@import 'shared/layers'
+@import 'shared/type'
+
+#site-header
+    @extend %header-layer
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    background-color: $gray
+
+    .archives, .jobs
+        @extend %source-sans-light
+        display: inline-block
+        width: 62px
+        padding-top: 35px
+        padding-bottom: 15px
+        font-size: 12px
+        text-align: center
+        color: $white
+        cursor: pointer
+
+        &:hover
+            color: $fierce-blue
+
+    .archives
+        float: left
+        +standard-icon('images/archive.svg', 45)
+        background-position: center 15px
+        background-color: $dark-gray
+
+        &:hover
+            background-image: inline-image('images/archive-active.svg')
+
+    .jobs
+        float: right
+        +standard-icon('images/jobs.svg', 45)
+        background-position: center 15px
+        background-color: $dark-gray
+
+        &:hover
+            background-image: inline-image('images/jobs-active.svg')
+
+
+    .branding
+        @extend %hide-type
+        float: left
+        display: inline-block
+        width: 150px
+        height: 62px
+        margin-left: 12px
+        +standard-icon('images/logo-white.png', 150)
+        background-size: 150px
+
+    .category_nav
+        float: left
+
+        .link
+            display: inline-block
+
+    .jobs
+        float: right
+        display: inline-block
+        width: 6

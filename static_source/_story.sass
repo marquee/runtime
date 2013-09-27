@@ -1,0 +1,44 @@
+@import 'compass/css3'
+
+@import 'config/breakpoints'
+@import 'shared/colors'
+@import 'shared/layers'
+@import 'shared/type'
+@import 'helpers'
+
+@import 'composer_theme'
+
+
+#story_title
+    position: relative
+    .item_title
+        @extend %source-sans-bold
+        @extend %title-layer
+        text-align: center
+        position: relative
+        margin: 0
+        color: $white
+        top: 120px
+        font-size: 40px
+        +respond-to-gt($Formwork_break_small)
+            top: 130px
+            font-size: 60px
+        +respond-to-gt($Formwork_break_medium)
+            top: 250px
+    .item_info
+        max-width: $text_width
+        .item_subtitle
+            padding: 34px $body_padding
+            .published_date
+                @extend %source-sans-light
+                color: $fierce-blue
+            .category
+                @extend %source-sans-bold
+                color: $light-gray
+
+
+
+#story_contemt
+    @extend %content-layer
+
+

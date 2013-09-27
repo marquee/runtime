@@ -1,16 +1,31 @@
 {% extends "_base.html" %}
 
+
+{% set story=story.published %}
+
+{% block body_id %}story_view{% endblock %}
+
 {% block view_content %}
 
-    {% set story=story.published %}
+    
+    <div id="story_title" class="item-full">
+        <div class="item_cover cover-twothirds" data-cover_type="image" style="background-image: url({{ story.cover() }})">
+            <h1 class="item_title">{{ story.title }}</h1>
+        </div>
+        <div class="item_info container">
+            <div class="item_subtitle">
+                <time class="published_date">{{ story.published_date.strftime('%b %d, %Y') }}</time>
+                <a class="category">{{ story.category }}</a>
+            </div>
+        </div>
 
-    {{ story|render_cover }}
+    </div>
 
-    <h1>{{ story.title }}</h1>
-
-    {% for block in story.content %}
-        {{ block|render_block }}
-    {% endfor %}
+    <div id="story_content" class="container-full">
+        {% for block in story.content %}
+            {{ block|render_block }}
+        {% endfor %}
+    </div>
 
 {% endblock %}
 
@@ -18,4 +33,5 @@
     <script src="http://cdn.droptype.com/uri/uri-1.11.2-min.js"></script>
     <script src="{{ static_url('widgets/cover_embed.js') }}"></script>
     <script src="{{ static_url('widgets/cover_gallery.js') }}"></script>
+    <script src="{{ static_url('story.js') }}"></script>
 {% endblock %}

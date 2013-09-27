@@ -1,13 +1,24 @@
 {% extends "_base.html" %}
 
-{% block body_id %}home{% endblock %}
+{% block body_id %}index_view{% endblock %}
 
 {% block view_content %}
-
-    No place like 127.0.0.1
-
-    {% for story in publication.stories().limit(20) %}
-        {{ story.title }}
-    {% endfor %}
-
+    <div class="publication_content container-full">
+    {%- for story in publication.stories().limit(20) -%}
+        {%- if story.published -%}
+            {%- set story=story.published -%}
+            <a href="{{ story.link }}" class="story container-full">
+                <div class="story_cover" style="background-image: url('{{ story.cover(640) }}');"></div>
+                <div class="story_info">
+                    <span class="supertitle">
+                        <span class="pub_date">{{ story.published_date.strftime('%b %d, %Y') }}</span>
+                        <span class="category">{{ story.category }}</span>
+                    </span>
+                    <h2 class="title">{{ story.title }}</h2>
+                    <p class="summary">{{ story|content_preview(400) }}</p>
+                </div>
+            </a>
+        {%- endif -%}
+    {%- endfor -%}
+    </div>
 {% endblock %}

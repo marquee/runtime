@@ -1,0 +1,31 @@
++exports('type')
+
+    @import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,300italic,400italic,700,700italic)
+
+    %hide-type
+        text-indent: -9999px
+
+    %light-type
+        font-weight: 200 !important
+        font-weight: lighter
+
+    %regular-type
+        font-weight: 400 !important
+        font-weight: normal
+
+    %bold-type
+        font-weight: 700 !important
+        font-weight: bold
+
+    %source-sans
+        font-family: "Source Sans Pro", sans-serif
+
+    $weights: light regular bold
+    @each $w in $weights
+        %source-sans-#{$w}
+            @extend %source-sans
+            @extend %#{$w}-type
+
+        %source-sans-#{$w}-italic
+            @extend %source-sans-#{$w}
+            font-style: italic

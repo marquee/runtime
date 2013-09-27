@@ -1,0 +1,31 @@
+@import 'compass/utilities/general/clearfix'
+
+@import 'shared/colors'
+@import 'shared/type'
+
+#site-footer
+    background-color:  $gray
+    padding-bottom: 37px
+    +clearfix()
+
+    .branding
+        @extend %hide-type
+        display: inline-block
+        width: 220px
+        height: 30px
+        margin: 70px 77px 0 30px
+        +standard-icon('images/logo-white.png', 140)
+
+    .publication_info
+        display: inline-block
+        max-width: 560px
+        min-width: 320px
+        color: $white
+
+        h1
+            @extend %source-sans-bold
+            font-size: 18px
+
+        .description
+            @extend %source-sans-regular
+            font-size: 14px
