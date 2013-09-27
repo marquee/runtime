@@ -309,13 +309,10 @@ doInit = (options={}, callback) ->
             console.log 'Made `static_source/`'
             next()
  
-        executeCommand ['rm', '-rf', '.git'], options, ->
-            executeCommand ['git', 'init'], options, ->
-                console.log 're-initialized git'
-                upstream_command = ['git','remote','add','upstream','git@git.droptype.com:offsite-publication-boilerplate.git']
-                executeCommand upstream_command, options, ->
-                    console.log 'upstream remote added'
-                    next()
+        upstream_command = ['git','remote','rename','origin','upstream']
+        executeCommand upstream_command, options, ->
+            console.log 'upstream remote set'
+            next()
  
  
 doFlushStatic = (options={}, callback) ->
