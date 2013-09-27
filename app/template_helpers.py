@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from app        import app
 from cgi        import escape as cgi_escape
 from composer   import renderBlock
