@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{% block html_title %}{% endblock %}</title>
+        <title>{% block html_title %}{{ publication.name }}{% endblock %}</title>
         <meta name="description" content="{% include 'includes/meta_description.txt' ignore missing %}">
         <meta name="viewport" content="width=device-width">
         <meta charset="utf-8" />
