@@ -143,12 +143,15 @@ class Story(MContentModel, HasCoverContent):
 
         Returns an Issue object
         """
-        issue = content_objects.filter(
-            slug=self.issue_content.slug
-        ).mapOnExecute(Issue).execute()[0]
+
+        if hasattr(self, 'issue_content'):
+            issue = content_objects.filter(
+                slug=self.issue_content.slug
+            ).mapOnExecute(Issue).execute()[0]
+        else:
+            issue = None
 
         return issue
-
 
     def related_stories(self, *args, **kwargs):
         """
