@@ -136,6 +136,19 @@ class Story(MContentModel, HasCoverContent):
         if self._container._published_json:
             return Story(Container(self._container._published_json[0]))
         return None
+        
+    def issue(self):
+        """
+        Public: access the issue in which this story appears
+
+        Returns an Issue object
+        """
+        issue = content_objects.filter(
+            slug=self.issue_content.slug
+        ).mapOnExecute(Issue).execute()[0]
+
+        return issue
+
 
     def related_stories(self, *args, **kwargs):
         """
