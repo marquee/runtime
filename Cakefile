@@ -98,7 +98,6 @@ makeCompassCommand = (command, options) ->
  
     compass_extra_options = [
         '--relative-assets',
-        '--require',            'compass-normalize',
         '--sass-dir',           ASSET_SOURCE,
         '--css-dir',            ASSET_OUTPUT,
         '--images-dir',         ASSET_SOURCE,
