@@ -141,7 +141,7 @@ class Story(MContentModel, HasCoverContent):
         """
         Public: access the issue in which this story appears
 
-        Returns an Issue object
+        Returns an Issue object or None if story has not been assigned to an issue.
         """
 
         if hasattr(self, 'issue_content'):
