@@ -1,0 +1,79 @@
++exports('type')
+    $sans_serif_stack:  sans-serif
+    $serif_stack:       serif
+
+    $light_weight:      200
+    $regular_weight:    400
+    $bold_weight:       700
+
+    %type-base
+        -webkit-font-smoothing: antialiased
+        -moz-osx-font-smoothing: grayscale
+
+    %light-weight-type
+        font-weight: lighter
+        font-weight: $light_weight
+
+    %regular-weight-type
+        font-weight: normal
+        font-weight: $regular_weight
+
+    %bold-weight-type
+        font-weight: bold
+        font-weight: $heavy_weight
+
+    %sans-serif
+        @extend %type-base
+        font-family: $sans_serif_stack
+
+    %serif
+        @extend %type-base
+        font-family: $serif_stack
+
+    %sans-serif-light
+        @extend %sans-serif
+        @extend %light-weight-type
+
+    %serif-light
+        @extend %serif
+        @extend %light-weight-type
+
+    %sans-serif-light-italic
+        @extend %sans-serif-light
+        font-style: italic
+
+    %serif-light-italic
+        @extend %serif-light
+        font-style: italic
+
+    %sans-serif-regular
+        @extend %sans-serif
+        @extend %regular-weight-type
+
+    %serif-regular
+        @extend %serif
+        @extend %regular-weight-type
+
+    %sans-serif-regular-italic
+        @extend %sans-serif-regular
+        font-style: italic
+
+    %serif-regular-italic
+        @extend %serif-regular
+        font-style: italic
+
+    %sans-serif-bold
+        @extend %sans-serif
+        @extend %bold-weight-type
+
+    %serif-bold
+        @extend %serif
+        @extend %bold-weight-type
+
+    %sans-serif-bold-italic
+        @extend %sans-serif-bold
+        font-style: italic
+
+    %serif-bold-italic
+        @extend %serif-bold
+        font-style: italic
