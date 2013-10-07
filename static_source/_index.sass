@@ -13,67 +13,8 @@
     .story
         position: relative
         display: block
-        width: 100%
-        height: 318px
         border-bottom: 2px solid #d2d2d2
         text-decoration: none
         +clearfix()
-
-        +respond-to-lt(narrow-screens)
-            height: auto
-
         &:last-child
             border-bottom: 0
-
-    .story_cover
-        float: left
-        display: block
-        width: 407px
-        height: 318px
-
-        +respond-to-lt(narrow-screens)
-            float: none
-            width: 100%
-            height: 384px
-
-
-    .story_info
-        float: left
-        display: block
-        margin-left: 42px
-        max-width: 50%
-
-        +respond-to-lt(narrow-screens)
-            float: none
-            margin: 0 35px 71px 35px
-            margin-left: 35px
-            margin-bottom: 71px
-            max-width: 100%
-
-
-    .supertitle
-        @extend %source-sans-regular
-        display: block
-        font-size: 16px
-        margin-top: 64px
-        margin-bottom: 5px
-
-        .pub_date
-            color: $fierce-blue
-
-        .category
-            color: $light-gray
-
-    .title
-        @extend %source-sans-bold
-        font-size: 40px
-        color: $fierce-blue
-        margin: 0 0 21px 0
-        padding: 0
-
-    .summary
-        @extend %source-sans-regular
-        font-size: 16px
-        color: $dark-gray
-        margin: 0
-        padding: 0

@@ -7,15 +7,15 @@
     {%- for story in publication.stories().limit(20) -%}
         {%- if story.published -%}
             {%- set story=story.published -%}
-            <a href="{{ story.link }}" class="story container-full">
-                <div class="story_cover" style="background-image: url('{{ story.cover(640) }}');"></div>
-                <div class="story_info">
-                    <span class="supertitle">
+            <a href="{{ story.link }}" class="story item-full item-left_cover">
+                <div class="item_cover cover-twothirds item_cover-width_third" style="background-image: url('{{ story.cover(640) }}');"></div>
+                <div class="item_info">
+                    <div class="item_supertitle">
                         <span class="pub_date">{{ story.published_date.strftime('%b %d, %Y') }}</span>
                         <span class="category">{{ story.category }}</span>
-                    </span>
-                    <h2 class="title">{{ story.title }}</h2>
-                    <p class="summary">{{ story|content_preview(400) }}</p>
+                    </div>
+                    <h2 class="item_title">{{ story.title }}</h2>
+                    <p class="item_deck">{{ story|content_preview(400) }}</p>
                 </div>
             </a>
         {%- endif -%}

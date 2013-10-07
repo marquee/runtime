@@ -1,0 +1,45 @@
+@import "shared/type"
+@import "shared/colors"
+
+@import "config/breakpoints"
+
+.item-left_cover
+    +respond-to-gt($Formwork_break_small)
+        max-height: 267px
+    +respond-to-gt($Formwork_break_medium)
+        max-height: 400px
+    .item_info
+        padding: 0 1em
+    overflow: hidden
+    text-overflow: ellipsis
+
+.item_supertitle
+    @extend %source-sans-regular
+    font-size: 16px
+    margin: 5px 0
+    +respond-to-gt($Formwork_break_small)   
+        margin-top: 24px
+    +respond-to-gt($Formwork_break_medium)
+        margin-top: 64px
+
+    .pub_date
+        color: $fierce-blue
+
+    .category
+        color: $light-gray
+
+.item_title
+    @extend %source-sans-bold
+    color: $fierce-blue
+    font-size: 24px
+    +respond-to-gt($Formwork_break_small)
+        font-size: 30px
+        margin: 0.5em 0
+    +respond-to-gt($Formwork_break_medium)
+        font-size: 40px
+        margin: 1em 0
+
+.item_deck
+    @extend %source-sans-regular
+    color: $dark-gray
+    font-size: 16px
