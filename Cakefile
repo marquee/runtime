@@ -265,6 +265,7 @@ doInitEnv = (options={}, callback) ->
         CACHE_SOFT_EXPIRY=10
         CONTENT_API_TOKEN=
         CONTENT_API_ROOT=marquee.by/content/
+        LIB_CDN_ROOT=marquee-cdn.net/
         DEBUG=True
         ENVIRONMENT=development
         PUBLICATION_NAME=
