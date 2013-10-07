@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{% block html_title %}{% endblock %}</title>
+        <title>{% block html_title %}{{ publication.name }}{% endblock %}</title>
         <meta name="description" content="{% include 'includes/meta_description.txt' ignore missing %}">
         <meta name="viewport" content="width=device-width">
         <meta charset="utf-8" />
         {%- if ENVIRONMENT != 'production' -%}
             <meta name="robots" content="noindex, nofollow">
         {%- endif %}
-        <link rel="stylesheet" type="text/css" href="http://cdn.droptype.com/formwork/formwork-0.1.0-min.css">
+        {% cdn 'formwork-0.1.0.css' %}
         <link rel="stylesheet" href="{{ static_url('screen.css') }}" type="text/css">
         <link rel="icon" href="{{ static_url('favicon.png') }}" type="image/png">
     </head>
@@ -28,12 +28,13 @@
                 {% block site_footer %}{% include "footer.html" %}{% endblock %}
             </footer>
 
-            <script src="http://cdn.droptype.com/params/params-1.1.0-min.js"></script>
+            {% cdn 'zepto-1.0.0.js','params-1.1.0.js' %}
             <script>
                 window.params = new Params();
                 {% block view_params %}{% endblock %}
             </script>
-            <script src="http://cdn.droptype.com/zepto/zepto-1.0-min.js"></script>
+
+
 
             {% block extra_scripts %}{% endblock %}
 

@@ -17,6 +17,7 @@ REQUIRED_ENV = [
     'CACHE_SOFT_EXPIRY',
     'SECRET_KEY',
     'PUBLICATION_SHORT_NAME',
+    'LIB_CDN_ROOT',
 ]
 
 # Load any additional configuration from an .env file if the environment
@@ -69,6 +70,7 @@ ENVIRONMENT             = os.environ.get('ENVIRONMENT', 'production')
 REDIS_URL               = os.environ.get('REDIS_URL')
 SECRET_KEY              = os.environ['SECRET_KEY']
 STATIC_URL              = os.environ['STATIC_URL']
+LIB_CDN_ROOT            = os.environ['LIB_CDN_ROOT']
 
 # Content API config
 CONTENT_API_TOKEN       = os.environ['CONTENT_API_TOKEN']

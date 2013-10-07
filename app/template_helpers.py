@@ -1,5 +1,4 @@
 # coding: utf-8
-
 from app        import app
 from cgi        import escape as cgi_escape
 from composer   import renderBlock
@@ -11,13 +10,13 @@ from .models    import modelFromRole
 
 import settings
 
+import re
+import unicodedata
 
 
 # Add various items to the template globals
 app.jinja_env.globals.update(ENVIRONMENT=settings.ENVIRONMENT)
 app.jinja_env.globals.update(DEBUG=settings.DEBUG)
-
-
 
 def static_url(path):
     """
@@ -57,7 +56,7 @@ def to_item_size(count, floor=1, ceiling=5):
     """
     Public: filter that converts a count of items to the appropriate size for
     [Formwork](https://github.com/droptype/formwork)'s `.item-` variants.
-    
+
     count       - the int count of items
     floor       - (optional: 1) the lowest number to use (for ensuring a
                     maximum size)
@@ -277,3 +276,17 @@ def asModel(eval_ctx, obj_dict):
     model = modelFromRole(content_object)
     return model
 app.jinja_env.filters['asModel'] = asModel
+
+@evalcontextfilter
+def slugify(eval_ctx, value):
+    """
+    Public: a filter that performs a Django-like slugification of a string
+
+    value - the string to slugify
+
+    Returns a string
+    """
+    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
+    value = re.sub('[^\w\s-]', '', value).strip().lower()
+    return mark_safe(re.sub('[-\s]+', '-', value))
+app.jinja_env.filters['slugify'] = slugify

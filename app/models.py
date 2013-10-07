@@ -136,6 +136,22 @@ class Story(MContentModel, HasCoverContent):
         if self._container._published_json:
             return Story(Container(self._container._published_json[0]))
         return None
+        
+    def issue(self):
+        """
+        Public: access the issue in which this story appears
+
+        Returns an Issue object or None if story has not been assigned to an issue.
+        """
+
+        if hasattr(self, 'issue_content'):
+            issue = content_objects.filter(
+                slug=self.issue_content.slug
+            ).mapOnExecute(Issue).execute()[0]
+        else:
+            issue = None
+
+        return issue
 
     def related_stories(self, *args, **kwargs):
         """
