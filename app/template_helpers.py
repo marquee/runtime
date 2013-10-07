@@ -15,8 +15,13 @@ import unicodedata
 
 
 # Add various items to the template globals
-app.jinja_env.globals.update(ENVIRONMENT=settings.ENVIRONMENT)
-app.jinja_env.globals.update(DEBUG=settings.DEBUG)
+app.jinja_env.globals.update({
+    'ENVIRONMENT'       : settings.ENVIRONMENT,
+    'DEBUG'             : settings.DEBUG,
+    'READER_TOKEN'      : settings.CONTENT_API_TOKEN,
+    'CONTENT_API_ROOT'  : settings.CONTENT_API_ROOT,
+})
+
 
 def static_url(path):
     """
