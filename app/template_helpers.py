@@ -288,5 +288,5 @@ def slugify(eval_ctx, value):
     """
     value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
     value = re.sub('[^\w\s-]', '', value).strip().lower()
-    return mark_safe(re.sub('[-\s]+', '-', value))
+    return Markup(re.sub('[-\s]+', '-', value))
 app.jinja_env.filters['slugify'] = slugify
