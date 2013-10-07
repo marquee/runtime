@@ -8,7 +8,7 @@
         {%- if ENVIRONMENT != 'production' -%}
             <meta name="robots" content="noindex, nofollow">
         {%- endif %}
-        <link rel="stylesheet" type="text/css" href="http://cdn.droptype.com/formwork/formwork-0.1.0-min.css">
+        {% cdn 'formwork-0.1.0.css' %}
         <link rel="stylesheet" href="{{ static_url('screen.css') }}" type="text/css">
         <link rel="icon" href="{{ static_url('favicon.png') }}" type="image/png">
         <meta property="og:image" content="{% block og_image %}{% endblock %}">
@@ -38,12 +38,13 @@
                 {% block site_footer %}{% endblock %}
             </footer>
 
-            <script src="http://cdn.droptype.com/params/params-1.1.0-min.js"></script>
+            {% cdn 'zepto-1.0.0.js','params-1.1.0.js' %}
             <script>
                 window.params = new Params();
                 {% block view_params %}{% endblock %}
             </script>
-            <script src="http://cdn.droptype.com/zepto/zepto-1.0-min.js"></script>
+
+
 
             {% block extra_scripts %}{% endblock %}
 
