@@ -22,3 +22,11 @@
     {%- endfor -%}
     </div>
 {% endblock %}
+
+{% block view_params %}
+    params.set('brozar.query', {
+        role: 'story',
+        _sort: '-first_published_date',
+        published_date__exists: true
+    });
+{% endblock %}

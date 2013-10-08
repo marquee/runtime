@@ -28,15 +28,25 @@
                 {% block site_footer %}{% include "footer.html" %}{% endblock %}
             </footer>
 
-            {% cdn 'zepto-1.0.0.js','params-1.1.0.js' %}
+            {% cdn 'params-1.1.0.js' %}
             <script>
                 window.params = new Params();
+                params.set('CONTENT_API_ROOT', '{{ CONTENT_API_ROOT }}');
+                params.set('READER_TOKEN', '{{ READER_TOKEN }}');
                 {% block view_params %}{% endblock %}
             </script>
+            {% cdn 'zepto-1.0.0.js', 'underscore-1.5.2.js' %}
+            <script>
+                _.templateSettings = {interpolate: /\{\{(.+?)\}\}/g};
+            </script>
+            <script src="{{ static_url('widgets/Drawer.js') }}"></script>
+            <script src="{{ static_url('widgets/Brozar.js') }}"></script>
+            <script src="{{ static_url('drawer_setup.js') }}"></script>
 
 
 
             {% block extra_scripts %}{% endblock %}
+
 
         {% endblock %}
     </body>

@@ -29,9 +29,19 @@
 
 {% endblock %}
 
+{% block view_params %}
+    params.set('brozar.query', {
+        role: 'story',
+        _sort: '-first_published_date',
+        published_date__exists: true,
+        slug__ne: '{{ story.slug }}'
+    });
+{% endblock %}
+
 {% block extra_scripts %}
     <script src="http://cdn.droptype.com/uri/uri-1.11.2-min.js"></script>
     <script src="{{ static_url('widgets/cover_embed.js') }}"></script>
     <script src="{{ static_url('widgets/cover_gallery.js') }}"></script>
     <script src="{{ static_url('story.js') }}"></script>
 {% endblock %}
+
