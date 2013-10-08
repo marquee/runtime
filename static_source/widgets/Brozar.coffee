@@ -68,6 +68,7 @@ class Brozar
         @_getItemWidth()
         @_updateScrollerWidth()
         @_showOrHideButtons()
+        @_scroll(0)
 
     _bindEvents: ->
         @ui.next.on('click', @next)
