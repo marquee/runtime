@@ -24,6 +24,7 @@
             top: 250px
     .item_info
         max-width: $text_width
+        padding: 0
         .item_subtitle
             padding: 34px $body_padding
 
@@ -31,20 +32,38 @@
 
 #story_content
     @extend %content-layer
-
+    .ImageBlock
+        margin-bottom: 1em
+        .content
+            position: relative
+        .Caption
+            background: rgba(0,0,0,0.5)
+            position: absolute
+            bottom: 0
+            left: 0
+            right: 0
+            +box-sizing(border-box)
 
 #story_related_content
     clear: both
     background: $extralight-gray
     padding-top: 20px
+    margin-top: 20px
     +respond-to-gt($Formwork_break_small)
         padding-top: 55px
+        margin-top: 55px
     a
         text-decoration: none
     .item_cover
         +single-transition(height, 0.5s)
     .item_cover:not([style])
         height: 0
+    .item_supertitle
+        margin-top: 24px
+    .item_title
+        color: $dark-gray
+        +respond-to-gt($Formwork_break_small)
+            font-size: 24px
 
 
 .ImageBlock
