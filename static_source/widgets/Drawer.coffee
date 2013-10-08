@@ -16,16 +16,18 @@ prefixProperty = (styles, property, value) ->
 class Drawer
     constructor: (_options) ->
         @_options = _.extend
-            location        : 'top'
-            mode            : 'push' # 'overlay'
-            content         : {}
-            height          : 260
-            transition      : 200
-            position        : 'fixed'
-            els_to_move     : ['body']
-            move_property   : 'margin-top'
+            location            : 'top'
+            mode                : 'push' # 'overlay'
+            content             : {}
+            height              : 260
+            transition          : 200
+            position            : 'fixed'
+            els_to_move         : ['body']
+            move_property       : 'margin-top'
+            close_on_outside    : true
         , _options
         @$el = $("<div class='Drawer Drawer-#{ @_options.location }'></div>")
+        @$el.on 'click', (e) -> e.stopPropagation()
         @el = @$el[0]
         @_captureElements()
         @_setStyles()
@@ -40,7 +42,8 @@ class Drawer
         $('.Drawer_trigger').each (i, el) =>
             $trigger = $(el)
             content_name = $trigger.attr('data-Drawer_content')
-            $trigger.on 'click', =>
+            $trigger.on 'click', (e) =>
+                e?.stopPropagation()
                 is_open = @toggleContent(content_name)
                 if is_open
                     $trigger.attr('data-active', true)
@@ -70,9 +73,12 @@ class Drawer
     render: ->
         return @el
 
-    open: ->
+    open: (e) ->
+        e?.stopPropagation()
         @is_open = true
         $body.attr('data-drawer_open', true)
+        if @_options.close_on_outside
+            $body.off('click', @close).one('click', @close)
         @$el.css
             height: @_options.height
         @_moving_els.each (i, el) =>
@@ -80,7 +86,8 @@ class Drawer
             default_value = $el.data('default_value')
             $el.css(@_options.move_property, @_options.height + default_value)
 
-    close: ->
+    close: (e) =>
+        e?.stopPropagation()
         @is_open = false
         $body.removeAttr('data-drawer_open')
         @_active_name = null
