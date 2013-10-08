@@ -10,8 +10,10 @@ class Brozar
             <div class="Brozar_content">
                 <div class="Brozar_scroller"></div>
             </div>
-            <button class="Brozar_control-next">Next</button>
-            <button class="Brozar_control-previous">Previous</button>
+            <div class="Brozar_controls">
+                <button class="Brozar_control-next">Next</button>
+                <button class="Brozar_control-previous">Previous</button>
+            </div>
         </div>
     """
     constructor: (options) ->
@@ -50,17 +52,17 @@ class Brozar
 
     _showOrHideButtons: ->
         if @ui.content.width() >= @ui.scroller.width()
-            @ui.previous.hide()
-            @ui.next.hide()
+            @ui.previous.attr('disabled', true)
+            @ui.next.attr('disabled', true)
         else
             unless @_at_max_right
-                @ui.next.show()
+                @ui.next.removeAttr('disabled')
             else
-                @ui.next.hide()
+                @ui.next.attr('disabled', true)
             unless @_at_max_left
-                @ui.previous.show()
+                @ui.previous.removeAttr('disabled')
             else
-                @ui.previous.hide()
+                @ui.previous.attr('disabled', true)
 
     onShow: =>
         @_getItemWidth()
