@@ -37,7 +37,7 @@ $(document).ready ->
                 }
             
         itemTemplate: _.template """
-            <a class="Brozar_item" href="{{ link }}">
+            <a class="Brozar_item item-fifth" href="{{ link }}">
                 <div class="item_cover" style="background-image: url({{ cover_url }})"></div>
                 <div class="item_info">
                     <div class="item_supertitle">
