@@ -1,8 +1,23 @@
 $body = $('body')
 
 
+class FierceBrozar extends Brozar
+    template: -> """
+        <div class="Brozar">
+            <div class="Brozar_content">
+                <div class="Brozar_scroller"></div>
+            </div>
+            <div class="Brozar_controls">
+                <button class="Drawer_close">Close</button>
+                <button class="Brozar_control-next">Next</button>
+                <button class="Brozar_control-previous">Previous</button>
+            </div>
+        </div>
+    """
+
+
 $(document).ready ->
-    brozar = new Brozar
+    brozar = new FierceBrozar
         mode    : 'continuous'
         query   : params.brozar.query
         url     : "//#{ params.CONTENT_API_ROOT }?token=#{ params.READER_TOKEN }"
@@ -36,3 +51,5 @@ $(document).ready ->
         content:
             brozar: brozar
 
+    brozar.$el.find('.Drawer_close').on 'click', ->
+        top_drawer.close()
