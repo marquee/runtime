@@ -15,6 +15,11 @@ class FierceBrozar extends Brozar
         </div>
     """
 
+MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+formatDate = (d) ->
+    return "#{ MONTHS[d.getMonth()] } #{ d.getDate() }, #{ d.getFullYear() }"
+
 
 $(document).ready ->
     brozar = new FierceBrozar
@@ -25,7 +30,7 @@ $(document).ready ->
             return _.map response, (item) ->
                 return {
                     cover_url: Brozar.extractCover(item)?['1280']
-                    published_date: item.first_published_date
+                    published_date: formatDate(new Date(item.first_published_date))
                     category: item.category or ''
                     title: item.title
                     link: "/#{ item.slug }/"
