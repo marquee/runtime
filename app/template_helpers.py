@@ -15,8 +15,13 @@ import unicodedata
 
 
 # Add various items to the template globals
-app.jinja_env.globals.update(ENVIRONMENT=settings.ENVIRONMENT)
-app.jinja_env.globals.update(DEBUG=settings.DEBUG)
+app.jinja_env.globals.update({
+    'ENVIRONMENT'       : settings.ENVIRONMENT,
+    'DEBUG'             : settings.DEBUG,
+    'READER_TOKEN'      : settings.CONTENT_API_TOKEN,
+    'CONTENT_API_ROOT'  : settings.CONTENT_API_ROOT,
+})
+
 
 def static_url(path):
     """
@@ -288,5 +293,5 @@ def slugify(eval_ctx, value):
     """
     value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
     value = re.sub('[^\w\s-]', '', value).strip().lower()
-    return mark_safe(re.sub('[-\s]+', '-', value))
+    return Markup(re.sub('[-\s]+', '-', value))
 app.jinja_env.filters['slugify'] = slugify
