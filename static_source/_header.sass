@@ -1,3 +1,7 @@
+@import 'compass/css3'
+
+@import 'config/breakpoints'
+
 @import 'shared/colors'
 @import 'shared/layers'
 @import 'shared/type'
@@ -10,7 +14,7 @@
     width: 100%
     background-color: $gray
 
-    .archives, .jobs
+    .nav_item
         @extend %source-sans-light
         display: inline-block
         width: 62px
@@ -42,7 +46,6 @@
         &:hover
             background-image: inline-image('images/jobs-active.svg')
 
-
     .branding
         @extend %hide-type
         float: left
@@ -59,10 +62,15 @@
         .link
             display: inline-block
 
-    .jobs
+    .share
         float: right
-        display: inline-block
-        width: 6
+        +standard-icon('images/share.svg', 45)
+        background-position: center 15px
+        background-color: $dark-gray
+
+        &:hover
+            background-image: inline-image('images/share-active.svg')
+
 
 .Drawer
     @extend %nav-layer
@@ -118,3 +126,28 @@
         margin: 0
         font-size: 16px
         color: $dark-gray
+
+
+.ShareView
+    text-align: center
+    padding-top: 90px
+    .share_link
+        $size: 70px
+        color: transparent
+        display: inline-block
+        width: $size
+        height: $size
+        background-repeat: no-repeat
+        background-position: center center
+        +background-size(contain)
+        &[href*="facebook.com"]
+            background-image: inline-image('images/facebook.svg')
+            margin: 0 10px
+            +respond-to-gt($Formwork_break_small)
+                margin: 0 100px
+            +respond-to-gt($Formwork_break_medium)
+                margin: 0 255px
+        &[href*="twitter.com"]
+            background-image: inline-image('images/twitter.svg')
+        &[href*="plus.google.com"]
+            background-image: inline-image('images/googleplus.svg')

@@ -5,9 +5,16 @@
 
 {% block body_id %}story_view{% endblock %}
 
+{% block html_title %}{{ story.title }} — {{ super() }}{% endblock %}
+
+{% block site_header %}
+    <a class="Drawer_trigger nav_item archives" data-Drawer_content="brozar">Archives</a>
+    <a class="Drawer_trigger nav_item share" data-Drawer_content="share">Share</a>
+    <a href="/" class="branding">Fierce</a>
+{% endblock %}
+
 {% block view_content %}
 
-    
     <div id="story_title" class="item-full">
         <div class="item_cover cover-twothirds" data-cover_type="image" style="background-image: url({{ story.cover() }})">
             <h1 class="item_title">{{ story.title }}</h1>

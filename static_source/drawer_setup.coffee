@@ -21,6 +21,20 @@ formatDate = (d) ->
     return "#{ MONTHS[d.getMonth()] } #{ d.getDate() }, #{ d.getFullYear() }"
 
 
+
+class ShareView
+    constructor: ->
+        url = escape(window.location.href)
+        text = escape($('title').text())
+        @$el = $("""<div class="ShareView">
+                <a class="share_link" href="https://plus.google.com/share?url=#{ url }">Google+</a>
+                <a class="share_link" href="https://www.facebook.com/sharer.php?u=#{ url }&t=#{ text }">Facebook</a>
+                <a class="share_link" href="http://twitter.com/intent/tweet?source=#{ params.twitter_screen_name }&url=#{ url }&text=#{ text }">Twitter</a>
+            </div>""")
+        @el = @$el[0]
+
+
+
 $(document).ready ->
     brozar = new FierceBrozar
         mode    : 'continuous'
@@ -29,11 +43,11 @@ $(document).ready ->
         parseResponse: (response) ->
             return _.map response, (item) ->
                 return {
-                    cover_url: Brozar.extractCover(item)?['1280']
-                    published_date: formatDate(new Date(item.first_published_date))
-                    category: item.category or ''
-                    title: item.title
-                    link: "/#{ item.slug }/"
+                    cover_url       : Brozar.extractCover(item)?['1280']
+                    published_date  : formatDate(new Date(item.first_published_date))
+                    category        : item.category or ''
+                    title           : item.title
+                    link            : "/#{ item.slug }/"
                 }
             
         itemTemplate: _.template """
@@ -54,7 +68,8 @@ $(document).ready ->
     top_drawer = new Drawer
         els_to_move: ['#site-header', '#view-content']
         content:
-            brozar: brozar
+            brozar  : brozar
+            share   : new ShareView()
 
     brozar.$el.find('.Drawer_close').on 'click', ->
         top_drawer.close()

@@ -33,6 +33,7 @@
                 window.params = new Params();
                 params.set('CONTENT_API_ROOT', '{{ CONTENT_API_ROOT }}');
                 params.set('READER_TOKEN', '{{ READER_TOKEN }}');
+                params.set('twitter_screen_name', 'fiercedotcom');
                 {% block view_params %}{% endblock %}
             </script>
             {% cdn 'zepto-1.0.0.js', 'underscore-1.5.2.js' %}
