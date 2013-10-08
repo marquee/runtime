@@ -36,6 +36,10 @@
         published_date__exists: true,
         slug__ne: '{{ story.slug }}'
     });
+    {%- if story.category -%}
+    {# this needs to change when categories become containers #}
+    params.set('brozar.query.category', '{{ story.category }}');
+    {%- endif -%}
 {% endblock %}
 
 {% block extra_scripts %}
