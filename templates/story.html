@@ -27,6 +27,34 @@
         {% endfor %}
     </div>
 
+    {% if story.related_content %}
+        <div id="story_related_content" class="container-full">
+            {%- for related in story.related_content -%}
+            {%- with related_story=related|asModel -%}
+            {%- if loop.first and story.related_content|length is odd -%}
+                {% set first_full=True %}
+            {%- else -%}
+                {% set first_full=False %}
+            {%- endif -%}
+            <a class="item-{% if first_full %}full{% else %}half{% endif %}" {% if related_story.cover_content %}data-cover_content_id="{{ related_story.cover_content.id }}{% endif %}" href="{{ related_story.link }}">
+                <div class="item_cover cover-{% if first_full %}half{% else %}full{% endif %}">
+                </div>
+                <div class="item_info">
+                    <div class="item_supertitle">
+                        <time class="published_date">{{ related_story.published_date.strftime('%b %d, %Y') }}</time>
+                        <span class="category">{{ related_story.category }}</span>
+                    </div>
+                    <h2 class="item_title">{{ related_story.title }}</h2>
+                    <p class="item_deck">
+                        {{ related_story|content_preview }}
+                    </p>
+                </div>
+            </a>
+            {%- endwith -%}
+            {%- endfor -%}
+        </div>
+    {% endif %}
+
 {% endblock %}
 
 {% block view_params %}
