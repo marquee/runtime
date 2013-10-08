@@ -51,9 +51,7 @@ class Drawer
         @_moving_els.each (i, el) =>
             $el = $(el)
             default_value = parseInt($el.css(@_options.move_property))
-            console.log '1', default_value, $el
             default_value ?= 0
-            console.log '2', default_value, $el
             $el.data('default_value', default_value)
             if $el.css('position') is 'static'
                 $el.css(position: 'relative')
@@ -80,7 +78,6 @@ class Drawer
         @_moving_els.each (i, el) =>
             $el = $(el)
             default_value = $el.data('default_value')
-            console.log i, 'opening', default_value
             $el.css(@_options.move_property, @_options.height + default_value)
 
     close: ->
@@ -92,16 +89,16 @@ class Drawer
         @_moving_els.each (i, el) =>
             $el = $(el)
             default_value = $el.data('default_value')
-            console.log i, 'closing', default_value
             $el.css(@_options.move_property, default_value)
 
     setContent: (content_name) ->
         @_active_name = content_name
-        content = @_options.content[content_name]
-        @$el.html(content)
+        content_view = @_options.content[content_name]
+        @$el.html(content_view.el)
+        content_view.onShow?()
+
 
     toggleContent: (content_name) ->
-        console.log 'toggling', content_name
         # if open and not active
         if content_name is @_active_name
             @close()
