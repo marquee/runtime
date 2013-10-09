@@ -14,7 +14,6 @@ class CDNTagExtension(Extension):
         ]).set_lineno(lineno)
 
     def _render(self, libs, request, debug):
-        print libs, debug
         if libs:
             if isinstance(libs, basestring):
                 libs = (libs,)
@@ -29,7 +28,6 @@ class CDNTagExtension(Extension):
                 lib_name        = lib_parts[0]
                 lib_version     = lib_parts[1]
                 force_minify    = len(lib_parts) > 2
-                print lib_name, lib_version, lib_type, use_compressed
 
                 if lib_type == 'css':
                     template = u'<link rel="stylesheet" type="text/css" href="{url}">'
