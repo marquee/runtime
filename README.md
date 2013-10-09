@@ -97,7 +97,7 @@ the library looks like a file name, but is actually a pattern:
 
     <library_module>[.<library_submodule>]-<major>.<minor>.<patch>.<type>
 
-The tag parses this pattern and uses it to construct the necessary URLs.
+The tag parses this pattern and uses it to construct the necessary HTML tags.
 
 Example:
 
@@ -111,11 +111,22 @@ and request:
     <script src="//marquee-cdn.net/zepto-1.0.0-min.js"></script>
     <script src="//marquee-cdn.net/zepto-1.0.0-min.js.gz"></script>
 
+While a usage like
+
+    {% cdn 'formwork-0.1.2.css' %}
+
+will yeild:
+
+    <link rel="stylesheet" type="text/css" href="//marquee-cdn.net/formwork-0.1.2.css">
+    <link rel="stylesheet" type="text/css" href="//marquee-cdn.net/formwork-0.1.2.css.gz">
+    <link rel="stylesheet" type="text/css" href="//marquee-cdn.net/formwork-0.1.2-min.css">
+    <link rel="stylesheet" type="text/css" href="//marquee-cdn.net/formwork-0.1.2-min.css.gz">
+
 See the [Marquee CDN repo](https://github.com/marquee/marquee-cdn) for a list
 of all the libraries available.
 
-Note: the tag is not aware of the library manifest, so it will generate the
-HTML tags even if the library does not exist.
+*Note: the tag is not aware of the library manifest, so it will generate the
+HTML tags even if the library does not exist.*
 
 
 ### `$ cake <command>`
