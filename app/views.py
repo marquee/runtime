@@ -20,6 +20,33 @@ def _loadPublication():
     publication = Publication(publication_container)
     return publication
 
+# Temporarily hardcode categories. Need to figure out a useful way to load them.
+CATEGORIES = [
+    {
+        'title': 'Accelerators',
+        'slug': 'accelerators',
+    },
+    {
+        'title': 'Gadgets',
+        'slug': 'gadgets',
+    },
+    {
+        'title': 'Mobile',
+        'slug': 'mobile',
+    },
+    {
+        'title': 'Startups',
+        'slug': 'startups',
+    },
+    {
+        'title': 'Tech',
+        'slug': 'tech',
+    },
+    {
+        'title': 'Video',
+        'slug': 'video',
+    },
+]
 
 
 @app.route('/')
@@ -27,7 +54,31 @@ def index():
     return render_template(
         'index.html',
         publication = _loadPublication(),
+        categories  = CATEGORIES,
     )
+
+
+@app.route('/category/<slug>/')
+def category(slug):
+
+    target_obj = data_loader.load(slug=slug)
+    if not target_obj:
+        abort(404)
+
+    # Choose template based on the role.
+    template_name = 'category.html'
+
+    context = {
+        'target_obj'    : target_obj,
+        'publication'   : _loadPublication(),
+        'categories'    : CATEGORIES,
+    }
+
+    return render_template(
+        template_name,
+        **context
+    )
+
 
 
 

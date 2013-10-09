@@ -34,6 +34,9 @@
                 params.set('CONTENT_API_ROOT', '{{ CONTENT_API_ROOT }}');
                 params.set('READER_TOKEN', '{{ READER_TOKEN }}');
                 params.set('twitter_screen_name', 'fiercedotcom');
+                {%- for category in categories -%}
+                params.push('categories', { title: '{{ category.title }}', slug: '{{ category.slug }}'});
+                {%- endfor -%}
                 {% block view_params %}{% endblock %}
             </script>
             {% cdn 'zepto-1.0.0.js', 'underscore-1.5.2.js' %}
@@ -44,10 +47,7 @@
             <script src="{{ static_url('widgets/Brozar.js') }}"></script>
             <script src="{{ static_url('drawer_setup.js') }}"></script>
 
-
-
             {% block extra_scripts %}{% endblock %}
-
 
         {% endblock %}
     </body>

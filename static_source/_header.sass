@@ -58,6 +58,53 @@
 
     .category_nav
         float: left
+        padding-top: 20px
+        padding-left: 20px
+        a, .popover_trigger
+            @extend %source-sans-regular
+            color: $white
+            cursor: pointer
+            font-size: 14px
+            text-decoration: none
+            padding: 0 1em
+            &:hover
+                color: $fierce-blue
+        .popover
+            display: inline-block
+            position: relative
+            min-height: 39px
+            .popover_content
+                display: none
+                position: absolute
+                background: $white
+                border: 1px solid $light-gray
+                width: 161px
+                right: -1em
+                top: 1.5em
+                a
+                    color: $dark-gray
+                    display: block
+                    padding: 0.5em
+                    &:hover
+                        color: $fierce-blue
+                &:before, &:after
+                    content: " "
+                    display: block
+                    position: absolute
+                    border: 10px solid transparent
+                    bottom: 100%
+                &:before
+                    border-bottom-color: $light-gray
+                    border-width: 11px
+                    right: 10px
+                &:after
+                    border-bottom-color: $white
+                    border-width: 10px
+                    right: 11px
+
+            &:hover
+                .popover_content
+                    display: block
 
         .link
             display: inline-block
