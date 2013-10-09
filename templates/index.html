@@ -4,22 +4,8 @@
 
 {% block view_content %}
     <div class="publication_content container-full">
-    {%- for story in publication.stories().limit(20) -%}
-        {%- if story.published -%}
-            {%- set story=story.published -%}
-            <a href="{{ story.link }}" class="story item-full item-left_cover">
-                <div class="item_cover cover-twothirds item_cover-width_third" style="background-image: url('{{ story.cover(640) }}');"></div>
-                <div class="item_info">
-                    <div class="item_supertitle">
-                        <span class="published_date">{{ story.published_date.strftime('%b %d, %Y') }}</span>
-                        <span class="category">{{ story.category }}</span>
-                    </div>
-                    <h2 class="item_title">{{ story.title }}</h2>
-                    <p class="item_deck">{{ story|content_preview(400) }}</p>
-                </div>
-            </a>
-        {%- endif -%}
-    {%- endfor -%}
+        {% set story_list=publication.stories().limit(20) %}
+        {% include "includes/item_index.html" with context %}
     </div>
 {% endblock %}
 

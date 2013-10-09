@@ -1,7 +1,23 @@
 {% extends "_base.html" %}
 
+{% block body_id %}index_view{% endblock %}
+
 {% block view_content %}
+    <div class="publication_content container-full">
+        {% set story_list=publication.stories(category=category.slug).limit(20) %}
+        {% include "includes/item_index.html" with context %}
+    </div>
+{% endblock %}
 
+{% block view_params %}
+    params.set('brozar.query', {
+        role: 'story',
+        _sort: '-first_published_date',
+        published_date__exists: true,
+        category: '{{ category.slug }}'
+    });
+{% endblock %}
 
-
+{% block extra_scripts %}
+    <script src="{{ static_url('header.js') }}"></script>
 {% endblock %}

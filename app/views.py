@@ -61,17 +61,16 @@ def index():
 @app.route('/category/<slug>/')
 def category(slug):
 
-    target_obj = data_loader.load(slug=slug)
-    if not target_obj:
+    category_obj = (c for c in CATEGORIES if c['slug'] == slug).next()
+    if not category_obj:
         abort(404)
 
-    # Choose template based on the role.
     template_name = 'category.html'
 
     context = {
-        'target_obj'    : target_obj,
         'publication'   : _loadPublication(),
         'categories'    : CATEGORIES,
+        'category'      : category_obj,
     }
 
     return render_template(
