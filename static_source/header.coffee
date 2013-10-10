@@ -27,6 +27,12 @@ $popover = $("""
 $popover_content = $popover.find('.popover_content')
 $popover_trigger = $popover.find('.popover_trigger')
 
+$popover_trigger.on 'touchend', ->
+    _.defer ->
+        if $popover.attr('data-active')
+            $popover.removeAttr('data-active')
+        else
+            $popover.attr('data-active', true)
 
 makeCategoryLink = (cat) ->
     return "<a href='/category/#{ cat.slug }/'>#{ cat.title }</a>"
