@@ -115,7 +115,20 @@
                     border-width: 10px
                     right: 11px
 
-            &:hover, &[data-active="true"]
+            // Transparent shield over the branding, for closing the
+            // popover without activating links.
+            .popover_closer
+                display: none
+                position: absolute
+                top: 0
+                left: -108px
+                width: 160px
+                height: 30px
+                background: transparent
+            &[data-active="true"]
+                .popover_closer
+                    display: block
+            &:hover:not([data-touch="true"]), &[data-active="true"]
                 .popover_content
                     display: block
 
