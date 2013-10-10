@@ -37,9 +37,10 @@ class ShareView
 
 $(document).ready ->
     brozar = new FierceBrozar
-        mode    : 'continuous'
-        query   : params.brozar.query
-        url     : "//#{ params.CONTENT_API_ROOT }?token=#{ params.READER_TOKEN }"
+        mode        : 'continuous'
+        query       : params.brozar.query
+        api_root    : 'http://' + params.CONTENT_API_ROOT
+        token       : params.READER_TOKEN
         parseResponse: (response) ->
             return _.map response, (item) ->
                 return {
