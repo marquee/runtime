@@ -50,16 +50,20 @@
         @extend %hide-type
         float: left
         display: inline-block
-        width: 150px
         height: 62px
         margin-left: 12px
         +standard-icon('images/logo-white.png', 150)
-        background-size: 150px
+        +background-size(contain)
+        width: 116px
+        +respond-to-gt($Formwork_break_small)
+            width: 150px
 
     .category_nav
         float: left
         padding-top: 20px
         padding-left: 20px
+        +respond-to-lt(444px)
+            padding-left: 0
         a, .popover_trigger
             @extend %source-sans-regular
             color: $white
@@ -77,6 +81,10 @@
                 background-image: inline-image('images/down-arrow.svg')
                 background-repeat: no-repeat
                 background-position: right 0.5em
+                +respond-to-lt(444px)
+                    display: inline-block
+                    width: 10px
+                    color: transparent
             .popover_content
                 display: none
                 position: absolute
