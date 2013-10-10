@@ -81,6 +81,53 @@ Static assets require CoffeeScript and Compass, as usual. The build process is
 managed by `cake`. The source files go into `static_source/` and come out in
 `static/`.
 
+### Libraries
+
+Front-end libraries are available on a CDN (CloudFront). The preferred way to
+use them in a template is using the `{% cdn … %}` template tag. This tag will
+automatically generate the appropriate HTML tag for the library, using the
+`LIB_CDN_ROOT` environment variable. It also will choose the minified or
+development version, depending on the environment, and will point to the
+gzipped version if the client accepts it.
+
+To use, simply include the tag `{% cdn 'library-x.y.z.type' %}` where the
+library needs to be included. Multiple libraries can be provided, comma-
+separated, `{% cdn 'library1-x.y.z.js','library2-x.y.z.js' %}`. The name of
+the library looks like a file name, but is actually a pattern:
+
+    <library_module>[.<library_submodule>]-<major>.<minor>.<patch>.<type>
+
+The tag parses this pattern and uses it to construct the necessary HTML tags.
+
+Example:
+
+    {% cdn 'zepto-1.0.0.js' %}
+
+will yield one of the following possible tags, depending on the environment
+and request:
+
+    <script src="//marquee-cdn.net/zepto-1.0.0.js"></script>
+    <script src="//marquee-cdn.net/zepto-1.0.0.js.gz"></script>
+    <script src="//marquee-cdn.net/zepto-1.0.0-min.js"></script>
+    <script src="//marquee-cdn.net/zepto-1.0.0-min.js.gz"></script>
+
+While a usage like
+
+    {% cdn 'formwork-0.1.2.css' %}
+
+will yeild:
+
+    <link rel="stylesheet" type="text/css" href="//marquee-cdn.net/formwork-0.1.2.css">
+    <link rel="stylesheet" type="text/css" href="//marquee-cdn.net/formwork-0.1.2.css.gz">
+    <link rel="stylesheet" type="text/css" href="//marquee-cdn.net/formwork-0.1.2-min.css">
+    <link rel="stylesheet" type="text/css" href="//marquee-cdn.net/formwork-0.1.2-min.css.gz">
+
+See the [Marquee CDN repo](https://github.com/marquee/marquee-cdn) for a list
+of all the libraries available.
+
+*Note: the tag is not aware of the library manifest, so it will generate the
+HTML tags even if the library does not exist.*
+
 
 ### `$ cake <command>`
 

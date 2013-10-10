@@ -1,4 +1,4 @@
-console.log 'Brozar.coffee'
+
 
 is_mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
 
@@ -19,10 +19,15 @@ class Brozar
     constructor: (options) ->
         @_contents = []
         @_options = _.extend
-            mode: 'continuous'
-            query: {}
+            mode        : 'continuous'
+            query       : {}
+            api_root    : 'http://marquee.by/content/'
+            limit       : 10
             parseResponse: (r) -> r
         , options
+        @_loaded_all = false
+        @_page_loaded = -1
+        @_num_loaded = 0
         
         @$el = $(@template())
         @el = @$el[0]
@@ -73,17 +78,19 @@ class Brozar
     _bindEvents: ->
         @ui.next.on('click', @next)
         @ui.previous.on('click', @previous)
+        @ui.content.on 'scroll', _.debounce =>
+            @_scroll(0, load_anyway=true)
+        , 50
         $(window).on('resize', _.debounce(@onShow, 50))
 
-    _updateScrollerWidth: ->
+    _updateScrollerWidth: =>
         @ui.scroller.css
-            width: @_contents.length * @_item_width
+            width: @_num_loaded * @_item_width
 
-    _getItemWidth: ->
+    _getItemWidth: =>
         @_item_width = @$el.find('.Brozar_item').first().width()
 
     render: ->
-        @ui.scroller.empty()
         _.each @_contents, (item) =>
             $item_el = $(@_options.itemTemplate(item))
             $item_el.on 'click', (e) ->
@@ -92,13 +99,28 @@ class Brozar
                     window.location = $item_el.attr('href')
             @ui.scroller.append($item_el)
 
-    load: ->
-        $.ajax
-            url: @_options.url
-            data: @_options.query
-            success: (response) =>
-                @_contents = @_options.parseResponse(response)
-                @render()
+    load: (page=0) ->
+        unless @_loaded_all or @_is_loading
+            @_is_loading = true
+            offset = page * @_options.limit
+            @_contents = []
+            @_page_loaded = page
+            $.ajax
+                url: @_options.api_root
+                data: @_options.query
+                headers:
+                    'Authorization'             : "Token #{ @_options.token }"
+                    'X-Content-Query-Limit'     : @_options.limit
+                    'X-Content-Query-Offset'    : offset
+                success: (response) =>
+                    @_is_loading = false
+                    @_contents = @_options.parseResponse(response)
+                    if @_contents.length is 0
+                        @_loaded_all = true
+                    else
+                        @_num_loaded += @_contents.length
+                        @render()
+                        _.defer(@onShow)
 
     next: =>
         @_scroll((@ui.content.width() - @_item_width) * -1)
@@ -106,7 +128,7 @@ class Brozar
     previous: =>
         @_scroll(@ui.content.width() - @_item_width)
 
-    _scroll: (distance) =>
+    _scroll: (distance, load_anyway=false) =>
         min_left = -1 * @ui.scroller.width() + @ui.content.width()
         max_left = 0
         new_left = @_current_left + distance
@@ -123,6 +145,9 @@ class Brozar
         @_current_left = new_left
         @ui.scroller.css
             left: @_current_left
+
+        if (distance < 0 or load_anyway) and min_left < 0 and Math.abs(min_left) - Math.abs(new_left) < 2 * @_item_width
+            @load(@_page_loaded + 1)
 
         @_showOrHideButtons()
 
