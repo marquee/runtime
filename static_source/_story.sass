@@ -22,15 +22,18 @@
         @extend %title-layer
         text-align: center
         position: relative
-        margin: 0
+        margin: 0 auto
         top: 120px
         color: $white
+        max-width: 400px
         +respond-to-gt($Formwork_break_small)
             top: 130px
             font-size: 40px
+            max-width: 600px
         +respond-to-gt($Formwork_break_medium)
             top: 250px
             font-size: 60px
+            max-width: 800px
     .item_info
         max-width: $text_width
         padding: 0
