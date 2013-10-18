@@ -21,19 +21,19 @@
 
         {% block content %}
 
-            <div id="site-header">
+            <div id="site_header">
                 {% block site_header %}
                     <a class="logo" href="{{ url_for('index') }}">{{ publication.title }}</a>
-                    <nav id="site-nav">
+                    <nav id="site_nav">
                     </nav>
                 {% endblock %}
             </div>
 
-            <div id="view-content">
+            <div id="view_content">
                 {% block view_content %}{% endblock %}
             </div>
 
-            <footer id="site-footer">
+            <footer id="site_footer">
                 {% block site_footer %}{% endblock %}
             </footer>
 
