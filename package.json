@@ -4,6 +4,7 @@
     "coffee-script": "~1.6.x",
     "execSync": "~1.0.1-pre",
     "fs-extra": "~0.6.x",
+    "formwork": "https://github.com/marquee/formwork/tarball/develop",
     "mime": "~1.2.11",
     "uglify-js": "~2.4.0",
     "walk": "~2.2.1"

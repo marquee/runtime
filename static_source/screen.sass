@@ -10,15 +10,33 @@
 $modules: () !default
 @mixin exports($name)
     @if (index($modules, $name) == false)
-        $modules: append($modules, $name)
+        $modules: append($modules, $name) !global
         @content
 
-@import "widgets/cover_gallery"
-@import "widgets/cover_embed"
+// Configure the project to use Shiny: http://shinysass.org
+@import "formwork/shiny"
+
+
+
+// Reset.
+// These variables are something normalize needs, apparently.
+$legacy-support-for-ie6: false
+$legacy-support-for-ie7: false
+@import "normalize"
+%Item
+    text-decoration: none
+
+
+// Import global configurations
+
+@import "./global/typography"
+@import "./global/composer_theme"
+
+
+
 
 // Load the Composer styles, using the project-specific theme and the default
 // selectors. (Installed by the Composer Python package.)
-@import "composer_theme"
 @import "composer"
 @import "composer_selectors"
 
