@@ -1,6 +1,8 @@
 FROM boxcar/raring
+ADD . /srv/runtime
 RUN apt-get update
 RUN apt-get install -y python-pip
-RUN pip install flask
-ADD . /srv/runtime
-RUN ls /srv/runtime
+RUN apt-get install -y nodejs
+RUN apt-get install -y npm
+RUN pip install -r /srv/runtime/requirements.txt
+RUN npm install /srv/runtime/package.json
