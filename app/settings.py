@@ -78,3 +78,5 @@ CONTENT_API_ROOT        = os.environ['CONTENT_API_ROOT']
 CACHE_SOFT_EXPIRY       = int(os.environ['CACHE_SOFT_EXPIRY'])  # minutes
 PUBLICATION_SHORT_NAME  = os.environ['PUBLICATION_SHORT_NAME']
 PUBLICATION_NAME        = os.environ.get('PUBLICATION_NAME', u'')
+
+HYPERDRIVE              = True
