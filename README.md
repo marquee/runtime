@@ -52,7 +52,7 @@
 First, make sure you are in the virtualenv: `$ workon <project_name>`
 
 To run the project in debug mode, with the auto reloader, use
-`$ python run.py debug`.
+`$ python manage.py runserver`.
 
 To run the project as if it is on Heroku, use `$ foreman start`. The project
 also supports caching using redis. To use this locally, start redis and set
