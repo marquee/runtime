@@ -6,7 +6,7 @@ is_mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgen
 $window = $(window)
 $nav    = $('#site-header .category_nav')
 
-FIXED_ORDER = ['startups', 'accelerators', 'video']
+FIXED_ORDER = ['la', 'electronic', 'unearthed']
 first_categories = {}
 other_categories = []
 
@@ -17,6 +17,7 @@ _.each params.categories, (cat) ->
         other_categories.push(cat)
 first_categories = _.map FIXED_ORDER, (slug) -> first_categories[slug]
 
+console.log "asdf", first_categories
 
 $popover = $("""
         <div class="popover">

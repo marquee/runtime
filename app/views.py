@@ -1,7 +1,10 @@
 from flask          import render_template, abort
 from .data_loader   import data_loader
 from .main          import app
-from .models        import Publication, modelFromRole
+
+from hyperdrive.models import Publication, Story, modelFromRole
+
+from hyperdrive.storyset import StorySet
 
 import settings
 import template_helpers
@@ -20,56 +23,35 @@ def _loadPublication():
     publication = Publication(publication_container)
     return publication
 
-# Temporarily hardcode categories. Need to figure out a useful way to load them.
-CATEGORIES = [
-    {
-        'title': 'Accelerators',
-        'slug': 'accelerators',
-    },
-    {
-        'title': 'Gadgets',
-        'slug': 'gadgets',
-    },
-    {
-        'title': 'Mobile',
-        'slug': 'mobile',
-    },
-    {
-        'title': 'Startups',
-        'slug': 'startups',
-    },
-    {
-        'title': 'Tech',
-        'slug': 'tech',
-    },
-    {
-        'title': 'Video',
-        'slug': 'video',
-    },
-]
 
 
 @app.route('/')
 def index():
+    publication = Publication()
+
+    print len(publication.categories())
     return render_template(
         'index.html',
-        publication = _loadPublication(),
-        categories  = CATEGORIES,
+        publication = publication,
+        categories  = publication.categories(),
     )
 
 
 @app.route('/category/<slug>/')
 def category(slug):
+    publication = Publication()
 
-    category_obj = (c for c in CATEGORIES if c['slug'] == slug).next()
+    category_obj = publication.get_category(slug)
+
     if not category_obj:
         abort(404)
 
     template_name = 'category.html'
 
+
     context = {
-        'publication'   : _loadPublication(),
-        'categories'    : CATEGORIES,
+        'publication'   : publication,
+        'categories'    : publication.categories(),
         'category'      : category_obj,
     }
 
@@ -93,7 +75,7 @@ def page(slug):
 
     context = {
         target_obj.role : modelFromRole(target_obj),
-        'publication'   : _loadPublication(),
+        'publication'   : Publication(),
     }
 
     return render_template(

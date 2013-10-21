@@ -4,7 +4,7 @@
 
 {% block view_content %}
     <div class="publication_content container-full">
-        {% set story_list=publication.stories(category=category.slug).limit(20) %}
+        {% set story_list=publication.stories(category=category.slug)[0:20]%}
         {% include "includes/item_index.html" with context %}
     </div>
 {% endblock %}
