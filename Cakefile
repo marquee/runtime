@@ -62,7 +62,7 @@ setUpEnv = ->
 executeCommand = (command, options, callback, errorCB) ->
     exec command.join(' '), (err, stdout, stderr) ->
         if err?
-            console.log '\n\n\n', '*******************', command, 'failed!\n\n***************\n', err, stderr
+            console.log '\n\n\n', '*******************', command.join(' '), 'failed!\n\n***************\n', err, stderr
             if errorCB?
                 errorCB(err)
             else
@@ -98,6 +98,7 @@ makeCompassCommand = (command, options) ->
  
     compass_extra_options = [
         '--relative-assets',
+        '--poll'
         '--require',            'compass-normalize',
         '--sass-dir',           ASSET_SOURCE,
         '--css-dir',            ASSET_OUTPUT,
@@ -106,11 +107,12 @@ makeCompassCommand = (command, options) ->
     ]
  
     python_base = execSync.exec('which python').stdout.trim().replace(path.join('bin', 'python'),'')
-    extensions = ['composer'].map (ext_name) -> path.join(python_base, 'src', ext_name)
- 
-    extensions.forEach (ext) ->
-        compass_extra_options.push('--load')
-        compass_extra_options.push(ext)
+    [
+        path.join(python_base, 'src', 'composer', 'stylesheets'), # TODO: generalize this importing
+        path.join(PROJECT_ROOT, 'node_modules')
+    ].forEach (p) ->
+        compass_extra_options.push('--import-path')
+        compass_extra_options.push(p)
  
     compass_command.push(compass_extra_options...)
     return compass_command

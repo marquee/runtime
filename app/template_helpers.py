@@ -282,8 +282,8 @@ def asModel(eval_ctx, obj_dict):
     return model
 app.jinja_env.filters['asModel'] = asModel
 
-@evalcontextfilter
-def slugify(eval_ctx, value):
+@app.template_filter()
+def slugify(value):
     """
     Public: a filter that performs a Django-like slugification of a string
 
@@ -294,4 +294,3 @@ def slugify(eval_ctx, value):
     value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
     value = re.sub('[^\w\s-]', '', value).strip().lower()
     return Markup(re.sub('[-\s]+', '-', value))
-app.jinja_env.filters['slugify'] = slugify

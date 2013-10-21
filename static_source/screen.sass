@@ -10,7 +10,7 @@
 $modules: () !default
 @mixin exports($name)
     @if (index($modules, $name) == false)
-        $modules: append($modules, $name)
+        $modules: append($modules, $name) !global
         @content
 
 @mixin standard-icon($image_path, $size: 100%)
@@ -26,7 +26,6 @@ $modules: () !default
 
 // Load the Composer styles, using the project-specific theme and the default
 // selectors. (Installed by the Composer Python package.)
-@import "composer_theme"
 @import "composer"
 @import "composer_selectors"
 

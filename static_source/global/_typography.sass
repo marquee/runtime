@@ -1,0 +1,13 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,600|Noticia+Text:400,700,400italic,700italic|Source+Sans+Pro:300,700,300italic,700italic|Vollkorn:400italic,400,700italic,700|Alegreya:700)
+
+$type--base_font_size: 16px !default
+
+@function fontstack($primary)
+    $stack: 'Helvetica', 'Arial', 'sans-serif'
+    @if $primary == 'Open Sans'
+        $stack: 'Open Sans', 'Helvetica', 'Arial', 'sans-serif'
+    @if $primary == 'Lora'
+        $stack: 'Lora', 'Times New Roman', 'serif'
+    @return $stack
+
+
