@@ -43,7 +43,7 @@ loadEnvFile = (f) ->
 setUpEnv = ->
     unless ENV?
         ENV = {
-            ASSET_CDN_ROOT: 'cdn.mrqe.co' # for backward compatibility
+            ASSET_CDN_ROOT: 'cdn.mrqe.co/' # for backward compatibility
         }
         loadEnvFile(ENV_FILE)
         loadEnvFile(ENV_DEVELOPMENT_FILE)
