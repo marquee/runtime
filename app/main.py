@@ -15,3 +15,9 @@ app = Flask(
 app.jinja_env.add_extension('app.template_extensions.CDNTagExtension')
 
 app.config.from_object(settings)
+
+
+
+if settings.HYPERDRIVE:
+	from hyperdrive.main import hyperdrive
+	app.register_blueprint(hyperdrive, url_prefix="/hyperdrive")
