@@ -42,7 +42,9 @@ loadEnvFile = (f) ->
  
 setUpEnv = ->
     unless ENV?
-        ENV = {}
+        ENV = {
+            ASSET_CDN_ROOT: 'cdn.mrqe.co' # for backward compatibility
+        }
         loadEnvFile(ENV_FILE)
         loadEnvFile(ENV_DEVELOPMENT_FILE)
         missing_env_vars = []
@@ -98,11 +100,10 @@ makeCompassCommand = (command, options) ->
  
     compass_extra_options = [
         '--relative-assets',
-        '--poll'
         '--require',            'compass-normalize',
         '--sass-dir',           ASSET_SOURCE,
         '--css-dir',            ASSET_OUTPUT,
-        '--images-dir',         ASSET_SOURCE,
+        '--images-dir',         path.join(ASSET_SOURCE, 'images'),
         '--javascripts-dir',    ASSET_OUTPUT,
     ]
  
@@ -235,7 +236,7 @@ pushAssetsToS3 = (options, callback) ->
                 file_obj.upload key_prefix, ->
                     uploaded_files.push(file_obj)
                     if uploaded_files.length is asset_list.length
-                        new_static_url = "http://#{ ENV.S3_BUCKET_NAME }/#{ key_prefix }"
+                        new_static_url = "http://#{ ENV.ASSET_CDN_ROOT }#{ key_prefix }"
                         callback?(new_static_url)
  
  
@@ -268,6 +269,7 @@ doInitEnv = (options={}, callback) ->
         CONTENT_API_TOKEN=
         CONTENT_API_ROOT=marquee.by/content/
         LIB_CDN_ROOT=marquee-cdn.net/
+        ASSET_CDN_ROOT=assets.marquee-cdn.net/
         DEBUG=True
         ENVIRONMENT=development
         PUBLICATION_NAME=
