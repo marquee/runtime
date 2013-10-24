@@ -1,10 +1,7 @@
 from flask          import render_template, abort
 from .data_loader   import data_loader
 from .main          import app
-
-from hyperdrive.models import Publication, Story, modelFromRole
-
-from hyperdrive.storyset import StorySet
+from .models        import Publication, modelFromRole
 
 import settings
 import template_helpers
@@ -27,39 +24,10 @@ def _loadPublication():
 
 @app.route('/')
 def index():
-    publication = Publication()
-
-    print len(publication.categories())
     return render_template(
         'index.html',
-        publication = publication,
-        categories  = publication.categories(),
+        publication = _loadPublication(),
     )
-
-
-@app.route('/category/<slug>/')
-def category(slug):
-    publication = Publication()
-
-    category_obj = publication.get_category(slug)
-
-    if not category_obj:
-        abort(404)
-
-    template_name = 'category.html'
-
-
-    context = {
-        'publication'   : publication,
-        'categories'    : publication.categories(),
-        'category'      : category_obj,
-    }
-
-    return render_template(
-        template_name,
-        **context
-    )
-
 
 
 
@@ -75,7 +43,7 @@ def page(slug):
 
     context = {
         target_obj.role : modelFromRole(target_obj),
-        'publication'   : Publication(),
+        'publication'   : _loadPublication(),
     }
 
     return render_template(
