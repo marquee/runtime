@@ -105,6 +105,9 @@ if __name__ == '__main__':
 
     if command == 'runserver':
         debug   = arguments.get('--debug')
-        port    = int(arguments.get('-p', settings.PORT))
+        port    = arguments.get('-p')
 
-        app.run(port=port, debug=debug)
+        if port is None:
+            port = settings.PORT
+
+        app.run(port=int(port), debug=debug)
