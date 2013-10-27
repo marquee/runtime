@@ -1,6 +1,6 @@
 """
 Load the configuration specified in the environment into names for use
-elsewhere in the app. 
+elsewhere in the app.
 """
 
 import os

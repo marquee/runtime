@@ -1,7 +1,8 @@
-""" Usage: manage.py COMMAND [-p <port>] [--debug]
+""" Usage: manage.py COMMAND [-t <host>] [-p <port>] [--debug]
 
 Options:
     --debug     watch for changes and reload app
+    -t <host>   use an alternate host address
     -p <port>   use an alternate port number
 
 Commands:
@@ -105,9 +106,13 @@ if __name__ == '__main__':
 
     if command == 'runserver':
         debug   = arguments.get('--debug')
+        host    = arguments.get('-t')
         port    = arguments.get('-p')
+
+        if host is None:
+            host = settings.HOST
 
         if port is None:
             port = settings.PORT
 
-        app.run(port=int(port), debug=debug)
+        app.run(host=host, port=int(port), debug=debug)
