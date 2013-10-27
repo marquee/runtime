@@ -1,5 +1,5 @@
-from app 			  import app
-from app 		      import settings
+from app              import app
+from app              import settings
 
 from flask.ext.script import Manager
 import sys
@@ -7,8 +7,19 @@ import sys
 manager = Manager(app)
 
 if settings.HYPERDRIVE:
-	from hyperdrive.commands 	  import manager as hypermanager
-	manager.add_command("hyperdrive", hypermanager)
+    from hyperdrive.commands      import manager as hypermanager
+    from hyperdrive.main          import redisb
+    
+    manager.add_command("hyperdrive", hypermanager)
+
+    def _make_context():
+        return {
+            'app'           : app,
+            'StorySet'      : StorySet,
+            'Denormalizer'  : Denormalizer,
+            'redisb'        : redisb
+        }
+    manager.add_command("shell", Shell(make_context=_make_context))    
 
 if __name__ == '__main__':
 
@@ -16,4 +27,4 @@ if __name__ == '__main__':
         for r in app.url_map.iter_rules():
             print r
     else:
-    	manager.run()
+        manager.run()
