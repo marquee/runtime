@@ -1,0 +1,6 @@
+---
+ssh_home_dir: /home/vagrant
+runtime_dir: /home/vagrant/runtime
+runtime_venv_name: runtime
+runtime_venv_dir: /home/vagrant/.virtualenvs/runtime
+

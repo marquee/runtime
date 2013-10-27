@@ -1,0 +1,61 @@
+---
+- name: apt | update cache
+  sudo: yes
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: apt | install git
+  sudo: yes
+  apt: pkg=git-core state=latest
+
+- name: apt | install ruby
+  sudo: yes
+  apt: pkg=ruby state=latest
+
+- name: apt | install rubygems
+  sudo: yes
+  apt: pkg=rubygems state=latest
+
+- name: gem | install sass
+  sudo: yes
+  gem: name=sass state=latest
+
+- name: gem | install compass
+  sudo: yes
+  gem: name=compass state=latest
+
+- name: apt | install nodejs
+  sudo: yes
+  apt: pkg=nodejs state=latest
+
+- name: apt | install npm
+  sudo: yes
+  apt: pkg=npm state=latest
+
+- name: npm | install coffee-script
+  sudo: yes
+  npm: name=coffee-script global=yes state=latest
+
+- name: npm | install node dependencies
+  sudo: yes
+  npm: path={{ runtime_dir }} state=latest 
+
+- name: apt | install python
+  sudo: yes
+  apt: pkg=python state=latest
+  
+- name: apt | install pip
+  sudo: yes
+  apt: pkg=python-pip state=latest
+
+- name: apt | install virtualenvwrapper
+  sudo: yes
+  apt: pkg=virtualenvwrapper state=latest
+
+- name: pip | install python requirements
+  pip: chdir={{ runtime_dir }} virtualenv={{ runtime_venv_dir }} requirements=requirements.txt
+
+- name: bash | update profile
+  template: src=bash_profile.j2 dest={{ ssh_home_dir }}/.profile
+
+- name: cake | initialize runtime
+  command: cake init chdir={{ runtime_dir }} creates=.env
