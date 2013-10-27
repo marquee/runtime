@@ -2,9 +2,11 @@
 *.swo
 *.swp
 *.swo
+.cache/*
 .sass-cache/*
 .env
 .DS_Store
+.vagrant/*
 static/*
 node_modules/*
 aws_config.json
