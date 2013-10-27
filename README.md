@@ -1,5 +1,63 @@
 # Marquee Runtime
 
+## Getting Started
+
+The Marquee Runtime comes with it's own development environment that runs on [Vagrant](http://vagrantup.com) and is provisioned by [Ansible](http://ansibleworks.com). Because Ansible support in Vagrant is still under heavy development, we will need to install both [Vagrant](https://github.com/mitchellh/vagrant) and [Ansible](https://github.com/ansible/ansible) from source.
+
+You'll first want to uninstall any current installations of Vagrant by running through the uninstall package in the [official binaries](http://downloads.vagrantup.com/).
+
+If you don't have rubygems or bundler installed, you need them.
+
+```
+→ brew install rubygems
+→ gem install bundler
+```
+
+Then build and install Vagrant
+
+```
+→ git clone https://github.com/mitchellh/vagrant.git
+→ cd vagrant
+→ bundle install
+→ rake install
+```
+
+You can install Ansible using pip, but modules are still in heavy flux and keeping different versions of it in virtualenvs is more trouble than it's worth. Just install it from it's pretty stable source, and you'll be fine. Homebrewed it for simplicity.
+
+```
+# Install from source
+→ brew install ansible --HEAD
+
+# Keep up-to-date
+→ brew upgrade ansible --HEAD
+```
+
+The virtual machine used for the development environment will use private networking and assign itself the IP address `10.10.10.2`. To make your life easier, you should ignore host checking when ssh'ing to it; otherwise, you're going to have to delete lines in `~/.ssh/known_hosts` every time you rebuild the box.
+
+Add the following to `~/.ssh/config` to save yourself some time:
+
+```
+Host 10.10.10.2
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+```
+
+You're now good to go. Clone this repository into a *New Project* and then fire up vagrant to get to work.
+
+```
+→ git clone https://github.com/marquee/runtime.git <project_name>
+→ cd <project_name>
+→ vagrant up
+```
+
+Vagrant will run through setting up an [Ubuntu Server 13.04 (Raring) Cloud Image](http://cloud-images.ubuntu.com/) virtual machine,  install requirements, and set up your development environment. 
+
+You can access the development environment simply by running `vagrant ssh`. Defaults are defined in the [vagrant group_vars](https://github.com/marquee/runtime/tree/master/provisioning/group_vars/vagrant). Highlights below:
+
+- The runtime located is in your home directory at `/home/vagrant/runtime`. You are logged into this directory when you SSH into the machine. The root directory of the repository on the host machine is synced here, so you can work locally and changes will automatically appear within the development environment and reload watching scripts appropriately.
+
+- A Python virtual environment named `runtime` is created and into it all dependencies of the application installed. It is activated for you when you log into the virtual machine.
+
 
 
 ## Setup
