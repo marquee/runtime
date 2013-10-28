@@ -9,5 +9,6 @@
 .vagrant/*
 static/*
 node_modules/*
+npm-debug.log
 aws_config.json
 .env-development
