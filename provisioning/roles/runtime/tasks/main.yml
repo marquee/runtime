@@ -1,4 +1,5 @@
 ---
+
 - name: apt | update cache
   sudo: yes
   apt: update_cache=yes cache_valid_time=3600
@@ -23,9 +24,37 @@
   sudo: yes
   gem: name=compass state=latest
 
+- name: apt | install  python-software-properties
+  sudo: yes
+  apt: pkg=python-software-properties state=latest
+
+- name: apt | install python
+  sudo: yes
+  apt: pkg=python state=latest
+
+- name: apt | install g++
+  sudo: yes
+  apt: pkg=g++ state=latest
+
+- name: apt | install make
+  sudo: yes
+  apt: pkg=make state=latest
+
+- name: apt | add chris-lea/node.js repository
+  sudo: yes
+  apt_repository: repo='ppa:chris-lea/node.js' state=present update_cache=yes
+
 - name: apt | install nodejs
   sudo: yes
   apt: pkg=nodejs state=latest
+
+- name: apt | install nodejs-dev
+  sudo: yes
+  apt: pkg=nodejs-dev state=latest
+
+- name: symlink | /usr/bin/nodejs to /usr/bin/node
+  sudo: yes
+  file: src=/usr/bin/nodejs dest=/usr/bin/node state=link
 
 - name: apt | install npm
   sudo: yes
