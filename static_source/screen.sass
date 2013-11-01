@@ -19,6 +19,7 @@ $modules: () !default
     background-size: $size
     background-repeat: no-repeat
 
+
 @import "widgets/cover_gallery"
 @import "widgets/cover_embed"
 @import "widgets/Drawer"
@@ -29,9 +30,10 @@ $modules: () !default
 @import "composer"
 @import "composer_selectors"
 
-@import "base"
-@import "item"
-@import "header"
-@import "footer"
-@import "index"
-@import "story"
+// Load globals
+@import "global/colors"
+@import "global/typography"
+@import "global/composer_theme"
+
+// Load site modules
+@import "helpers"
