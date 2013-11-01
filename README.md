@@ -22,7 +22,7 @@ Then build and install Vagrant
 → rake install
 ```
 
-You can install Ansible using pip, but modules are still in heavy flux and keeping different versions of it in virtualenvs is more trouble than it's worth. Just install it from it's pretty stable source, and you'll be fine. Homebrewed it for simplicity.
+You can install Ansible using pip, but modules are still in heavy flux and keeping different versions of it in virtualenvs is more trouble than it's worth. Just install it from source, and you'll be fine. Homebrewed it for simplicity.
 
 ```
 # Install from source
