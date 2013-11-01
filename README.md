@@ -58,7 +58,7 @@ You can access the development environment simply by running `vagrant ssh`. Defa
 
 - A Python virtual environment named `runtime` is created and into it all dependencies of the application installed. It is activated for you when you log into the virtual machine.
 
-
+---
 
 ## Setup
 
