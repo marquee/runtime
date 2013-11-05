@@ -261,44 +261,45 @@ doWatch = (options={}, callback) ->
  
 doInitEnv = (options={}, callback) ->
     if fs.existsSync(path.join(PROJECT_ROOT, '.env')) and not options.force
-        throw new Error('.env exists. Already initialized?')
- 
-    crypto.randomBytes 32, (err, secret_key) ->
-        env_template = """
-        CACHE_SOFT_EXPIRY=10
-        CONTENT_API_TOKEN=
-        CONTENT_API_ROOT=marquee.by/content/
-        LIB_CDN_ROOT=marquee-cdn.net/
-        ASSET_CDN_ROOT=assets.marquee-cdn.net/
-        DEBUG=True
-        ENVIRONMENT=development
-        PUBLICATION_NAME=
-        PUBLICATION_SHORT_NAME=
-        STATIC_URL=/static/
-        SECRET_KEY=#{ secret_key.toString('hex') }
-        """
-        env_development_template = """
-        AWS_ACCESS_KEY_ID=
-        AWS_SECRET_ACCESS_KEY=
-        S3_BUCKET_NAME=cdn.mrqe.co
-        """
- 
-        operations = 0
-        next = ->
-            operations += 1
-            if operations is 2
-                callback?()
- 
-        fs.writeFile ENV_FILE, env_template, (err) ->
-            throw err if err?
-            console.log 'Wrote .env'
-            next()
- 
-        fs.writeFile ENV_DEVELOPMENT_FILE, env_development_template, (err) ->
-            throw err if err?
-            console.log 'Wrote .env-development'
-            next()
- 
+        console.log '.env exists. Already initialized?'
+    else
+     
+        crypto.randomBytes 32, (err, secret_key) ->
+            env_template = """
+            CACHE_SOFT_EXPIRY=10
+            CONTENT_API_TOKEN=
+            CONTENT_API_ROOT=marquee.by/content/
+            LIB_CDN_ROOT=marquee-cdn.net/
+            ASSET_CDN_ROOT=assets.marquee-cdn.net/
+            DEBUG=True
+            ENVIRONMENT=development
+            PUBLICATION_NAME=
+            PUBLICATION_SHORT_NAME=
+            STATIC_URL=/static/
+            SECRET_KEY=#{ secret_key.toString('hex') }
+            """
+            env_development_template = """
+            AWS_ACCESS_KEY_ID=
+            AWS_SECRET_ACCESS_KEY=
+            S3_BUCKET_NAME=cdn.mrqe.co
+            """
+     
+            operations = 0
+            next = ->
+                operations += 1
+                if operations is 2
+                    callback?()
+     
+            fs.writeFile ENV_FILE, env_template, (err) ->
+                throw err if err?
+                console.log 'Wrote .env'
+                next()
+     
+            fs.writeFile ENV_DEVELOPMENT_FILE, env_development_template, (err) ->
+                throw err if err?
+                console.log 'Wrote .env-development'
+                next()
+     
  
 doInit = (options={}, callback) ->
     doInitEnv options, ->
@@ -315,9 +316,12 @@ doInit = (options={}, callback) ->
             next()
  
         upstream_command = ['git','remote','rename','origin','upstream']
-        executeCommand upstream_command, options, ->
-            console.log 'upstream remote set'
-            next()
+        try
+            executeCommand upstream_command, options, ->
+                console.log 'upstream remote set'
+                next()
+        catch e
+            console.log e
  
  
 doFlushStatic = (options={}, callback) ->
