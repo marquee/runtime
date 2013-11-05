@@ -1,8 +1,11 @@
 ---
+- name: apt | add chris-lea/node.js repository
+  sudo: yes
+  apt_repository: repo='ppa:chris-lea/node.js' state=present
 
 - name: apt | update cache
   sudo: yes
-  apt: update_cache=yes cache_valid_time=3600
+  apt: update_cache=yes
 
 - name: apt | install git
   sudo: yes
@@ -40,25 +43,13 @@
   sudo: yes
   apt: pkg=make state=latest
 
-- name: apt | add chris-lea/node.js repository
-  sudo: yes
-  apt_repository: repo='ppa:chris-lea/node.js' state=present update_cache=yes
-
 - name: apt | install nodejs
   sudo: yes
   apt: pkg=nodejs state=latest
 
-- name: apt | install nodejs-dev
-  sudo: yes
-  apt: pkg=nodejs-dev state=latest
-
 - name: symlink | /usr/bin/nodejs to /usr/bin/node
   sudo: yes
   file: src=/usr/bin/nodejs dest=/usr/bin/node state=link
-
-- name: apt | install npm
-  sudo: yes
-  apt: pkg=npm state=latest
 
 - name: npm | install coffee-script
   sudo: yes

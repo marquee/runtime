@@ -22,7 +22,7 @@ Then build and install Vagrant
 → rake install
 ```
 
-You can install Ansible using pip, but modules are still in heavy flux and keeping different versions of it in virtualenvs is more trouble than it's worth. Just install it from source, and you'll be fine. Homebrewed it for simplicity.
+You can install Ansible using pip, but modules are still in heavy flux and keeping different versions of it in virtualenvs is more trouble than it's worth. Just install it from it's pretty stable source, and you'll be fine. Homebrewed it for simplicity.
 
 ```
 # Install from source
@@ -58,63 +58,27 @@ You can access the development environment simply by running `vagrant ssh`. Defa
 
 - A Python virtual environment named `runtime` is created and into it all dependencies of the application installed. It is activated for you when you log into the virtual machine.
 
----
+## Configuration
 
-## Setup
+First, make sure the following settings have been configured in your `.env` file:
 
-1. Clone the boilerplate template and install dev dependencies:
+- `CONTENT_API_TOKEN`
+- `PUBLICATION_NAME`
+- `PUBLICATION_SHORT_NAME`
 
-   `$ git clone git@github.com:marquee/runtime.git <project_name>`
-   `$ cd <project_name>`
+If you're going to be deploying this application publicly, you'll also want to hook up your AWS credentials so that static files can be handled by S3. These settings can be found in `.env-development`.
 
-   *(If it’s a pre-existing project, clone from the project repo instead.)*
+## Running the Runtime
 
-2. Install the various requirements:
+Once your `.env` and `.env-development` files are filled out, you'll be able to fire up runtime. To do so, we'll first SSH into the box, then run the `runserver` command.
 
-   `$ mkvirtualenv <project_name>`
-   `$ pip install -r requirements.txt`
-   `$ npm install`
+```
+→ vagrant ssh
+# Stuff happens
+→ runserver
+```
 
-3. Re-initialize the repo and copy the .env templates:
-
-   `$ cake init`
-
-   *(If this is a pre-existing project, use `init:env` instead.)*
-
-4. Add additional remotes (if necessary)
-
-   `$ git add remote origin git@git.droptype.com:<project_name>.git`
-   `$ git add remote heroku git@heroku.com:<project_name>.git`
-
-5. Fill out the environment variables:
-
-   In `.env`:
-
-   * `CONTENT_API_TOKEN` - A read-only ApplicationToken issued by Marquee.
-   * `PUBLICATION_NAME` - Arbitrary project name
-   * `PUBLICATION_SHORT_NAME` - The short name, used to prefix the asset uploads
-
-   In `.env-development`:
-
-   * `AWS_ACCESS_KEY_ID`
-   * `AWS_SECRET_ACCESS_KEY`
-
-   (They are in separate files to keep credentials that have write access
-   segregated. The `.env` file MUST NOT ever contain API tokens or Access
-   Keys or whatever that have write privileges.)
-
-
-
-## Running the project
-
-First, make sure you are in the virtualenv: `$ workon <project_name>`
-
-To run the project in debug mode, with the auto reloader, use
-`$ python manage.py runserver`.
-
-To run the project as if it is on Heroku, use `$ foreman start`. The project
-also supports caching using redis. To use this locally, start redis and set
-the `REDIS_URL` in `.env`.
+This will make the runtime accessible at [http://10.10.10.2:5000](http://10.10.10.2:5000).
 
 
 
@@ -126,10 +90,24 @@ If this is the first time the app is being deployed, you need to set
 certain environment variables using `$ heroku config:set`
 They can be set (almost) all at once:
 
-    $ heroku config:set CACHE_SOFT_EXPIRY=10 CONTENT_API_TOKEN=<read_only_token> CONTENT_API_ROOT=marquee.by/content/ DEBUG=False ENVIRONMENT=production PUBLICATION_NAME="<publication name>" SECRET_KEY=<secret_key> PUBLICATION_SHORT_NAME=<short_name>
+    $ heroku config:set CACHE_SOFT_EXPIRY=10 \
+    CONTENT_API_TOKEN=<read_only_token> \
+    CONTENT_API_ROOT=marquee.by/content/ \
+    DEBUG=False ENVIRONMENT=production \
+    PUBLICATION_NAME="<publication name>" \
+    SECRET_KEY=<secret_key> \
+    PUBLICATION_SHORT_NAME=<short_name>
+    
+You can also use [this python script](https://gist.github.com/alexcabrera/63b993a604cdb5410ce8) to configure Heroku for you. 
 
-To deploy the code, just `$ git push heroku master`. You’ll also want
-to run `$ cake deploy:static` if you made changes to the static assets.
+Fire and forget one-liner:
+
+```
+curl -L http://mrqe.co/1cKkLEV | python
+```
+
+To deploy the code, just `git push heroku master`. You’ll also want
+to run `cake deploy:static` if you made changes to the static assets.
 
 
 
@@ -217,4 +195,19 @@ characters of a `SHA-1` hash of the asset contents.
 
 To refer to a static asset in the templates, use
 `{{ static_url('filename.jpg') }}`. This will use the appropriate `STATIC_URL`.
+
+## Troubleshooting
+
+### SSH Error during *Getting Facts* stage of provisioning
+
+When bringing up the runtime environment with `vagrant up` for the first time, you may see the following message when Ansible attempts to begin provisioning:
+
+```
+GATHERING FACTS ***************************************************************
+fatal: [10.10.10.2] => SSH encountered an unknown error during the 
+connection. We recommend you re-run the command using -vvvv, which will 
+enable SSH debugging output to help diagnose the issue
+```
+
+Sometime its takes a little bit for the SSH server on the Vagrant box to fire up. Simply running `vagrant provision` to start the provisioning process over again should make it go away.
 
