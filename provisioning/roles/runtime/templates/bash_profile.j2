@@ -25,3 +25,6 @@ fi
 WORKON_HOME="$HOME/.virtualenvs"
 cd {{ runtime_dir }}
 workon runtime
+
+# Useful shortcuts
+alias runserver="python manage.py runserver -t 0.0.0.0"
