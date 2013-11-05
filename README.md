@@ -1,62 +1,84 @@
 # Marquee Runtime
 
+## Getting Started
 
+The Marquee Runtime comes with it's own development environment that runs on [Vagrant](http://vagrantup.com) and is provisioned by [Ansible](http://ansibleworks.com). Because Ansible support in Vagrant is still under heavy development, we will need to install both [Vagrant](https://github.com/mitchellh/vagrant) and [Ansible](https://github.com/ansible/ansible) from source.
 
-## Setup
+You'll first want to uninstall any current installations of Vagrant by running through the uninstall package in the [official binaries](http://downloads.vagrantup.com/).
 
-1. Clone the boilerplate template and install dev dependencies:
+If you don't have rubygems or bundler installed, you need them.
 
-   `$ git clone git@github.com:marquee/runtime.git <project_name>`
-   `$ cd <project_name>`
+```
+→ brew install rubygems
+→ gem install bundler
+```
 
-   *(If it’s a pre-existing project, clone from the project repo instead.)*
+Then build and install Vagrant
 
-2. Install the various requirements:
+```
+→ git clone https://github.com/mitchellh/vagrant.git
+→ cd vagrant
+→ bundle install
+→ rake install
+```
 
-   `$ mkvirtualenv <project_name>`
-   `$ pip install -r requirements.txt`
-   `$ npm install`
+You can install Ansible using pip, but modules are still in heavy flux and keeping different versions of it in virtualenvs is more trouble than it's worth. Just install it from it's pretty stable source, and you'll be fine. Homebrewed it for simplicity.
 
-3. Re-initialize the repo and copy the .env templates:
+```
+# Install from source
+→ brew install ansible --HEAD
 
-   `$ cake init`
+# Keep up-to-date
+→ brew upgrade ansible --HEAD
+```
 
-   *(If this is a pre-existing project, use `init:env` instead.)*
+The virtual machine used for the development environment will use private networking and assign itself the IP address `10.10.10.2`. To make your life easier, you should ignore host checking when ssh'ing to it; otherwise, you're going to have to delete lines in `~/.ssh/known_hosts` every time you rebuild the box.
 
-4. Add additional remotes (if necessary)
+Add the following to `~/.ssh/config` to save yourself some time:
 
-   `$ git add remote origin git@git.droptype.com:<project_name>.git`
-   `$ git add remote heroku git@heroku.com:<project_name>.git`
+```
+Host 10.10.10.2
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+```
 
-5. Fill out the environment variables:
+You're now good to go. Clone this repository into a *New Project* and then fire up vagrant to get to work.
 
-   In `.env`:
+```
+→ git clone https://github.com/marquee/runtime.git <project_name>
+→ cd <project_name>
+→ vagrant up
+```
 
-   * `CONTENT_API_TOKEN` - A read-only ApplicationToken issued by Marquee.
-   * `PUBLICATION_NAME` - Arbitrary project name
-   * `PUBLICATION_SHORT_NAME` - The short name, used to prefix the asset uploads
+Vagrant will run through setting up an [Ubuntu Server 13.04 (Raring) Cloud Image](http://cloud-images.ubuntu.com/) virtual machine,  install requirements, and set up your development environment. 
 
-   In `.env-development`:
+You can access the development environment simply by running `vagrant ssh`. Defaults are defined in the [vagrant group_vars](https://github.com/marquee/runtime/tree/master/provisioning/group_vars/vagrant). Highlights below:
 
-   * `AWS_ACCESS_KEY_ID`
-   * `AWS_SECRET_ACCESS_KEY`
+- The runtime located is in your home directory at `/home/vagrant/runtime`. You are logged into this directory when you SSH into the machine. The root directory of the repository on the host machine is synced here, so you can work locally and changes will automatically appear within the development environment and reload watching scripts appropriately.
 
-   (They are in separate files to keep credentials that have write access
-   segregated. The `.env` file MUST NOT ever contain API tokens or Access
-   Keys or whatever that have write privileges.)
+- A Python virtual environment named `runtime` is created and into it all dependencies of the application installed. It is activated for you when you log into the virtual machine.
 
+## Configuration
 
+First, make sure the following settings have been configured in your `.env` file:
 
-## Running the project
+- `CONTENT_API_TOKEN`
+- `PUBLICATION_NAME`
+- `PUBLICATION_SHORT_NAME`
 
-First, make sure you are in the virtualenv: `$ workon <project_name>`
+If you're going to be deploying this application publicly, you'll also want to hook up your AWS credentials so that static files can be handled by S3. These settings can be found in `.env-development`.
 
-To run the project in debug mode, with the auto reloader, use
-`$ python manage.py runserver`.
+## Running the Runtime
 
-To run the project as if it is on Heroku, use `$ foreman start`. The project
-also supports caching using redis. To use this locally, start redis and set
-the `REDIS_URL` in `.env`.
+Once your `.env` and `.env-development` files are filled out, you'll be able to fire up runtime. To do so, we'll first SSH into the box, then run the `runserver` command.
+
+```
+→ vagrant ssh
+# Stuff happens
+→ runserver
+```
+
+This will make the runtime accessible at [http://10.10.10.2:5000](http://10.10.10.2:5000).
 
 
 
@@ -68,10 +90,24 @@ If this is the first time the app is being deployed, you need to set
 certain environment variables using `$ heroku config:set`
 They can be set (almost) all at once:
 
-    $ heroku config:set CACHE_SOFT_EXPIRY=10 CONTENT_API_TOKEN=<read_only_token> CONTENT_API_ROOT=marquee.by/content/ DEBUG=False ENVIRONMENT=production PUBLICATION_NAME="<publication name>" SECRET_KEY=<secret_key> PUBLICATION_SHORT_NAME=<short_name>
+    $ heroku config:set CACHE_SOFT_EXPIRY=10 \
+    CONTENT_API_TOKEN=<read_only_token> \
+    CONTENT_API_ROOT=marquee.by/content/ \
+    DEBUG=False ENVIRONMENT=production \
+    PUBLICATION_NAME="<publication name>" \
+    SECRET_KEY=<secret_key> \
+    PUBLICATION_SHORT_NAME=<short_name>
+    
+You can also use [this python script](https://gist.github.com/alexcabrera/63b993a604cdb5410ce8) to configure Heroku for you. 
 
-To deploy the code, just `$ git push heroku master`. You’ll also want
-to run `$ cake deploy:static` if you made changes to the static assets.
+Fire and forget one-liner:
+
+```
+curl -L http://mrqe.co/1cKkLEV | python
+```
+
+To deploy the code, just `git push heroku master`. You’ll also want
+to run `cake deploy:static` if you made changes to the static assets.
 
 
 
@@ -159,4 +195,19 @@ characters of a `SHA-1` hash of the asset contents.
 
 To refer to a static asset in the templates, use
 `{{ static_url('filename.jpg') }}`. This will use the appropriate `STATIC_URL`.
+
+## Troubleshooting
+
+### SSH Error during *Getting Facts* stage of provisioning
+
+When bringing up the runtime environment with `vagrant up` for the first time, you may see the following message when Ansible attempts to begin provisioning:
+
+```
+GATHERING FACTS ***************************************************************
+fatal: [10.10.10.2] => SSH encountered an unknown error during the 
+connection. We recommend you re-run the command using -vvvv, which will 
+enable SSH debugging output to help diagnose the issue
+```
+
+Sometime its takes a little bit for the SSH server on the Vagrant box to fire up. Simply running `vagrant provision` to start the provisioning process over again should make it go away.
 
