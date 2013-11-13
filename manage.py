@@ -1,14 +1,13 @@
 from app              import app
 from app              import settings
 
-from flask.ext.script import Manager
+from flask.ext.script import Manager, Shell
 import sys
 
 manager = Manager(app)
 
 if settings.HYPERDRIVE:
     from hyperdrive.commands      import manager as hypermanager
-    from hyperdrive.main          import redisb
     
     manager.add_command("hyperdrive", hypermanager)
 
@@ -17,7 +16,6 @@ if settings.HYPERDRIVE:
             'app'           : app,
             'StorySet'      : StorySet,
             'Denormalizer'  : Denormalizer,
-            'redisb'        : redisb
         }
     manager.add_command("shell", Shell(make_context=_make_context))    
 
