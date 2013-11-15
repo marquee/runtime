@@ -280,7 +280,7 @@ doInitEnv = (options={}, callback) ->
         env_development_template = """
         AWS_ACCESS_KEY_ID=
         AWS_SECRET_ACCESS_KEY=
-        S3_BUCKET_NAME=cdn.mrqe.co
+        S3_BUCKET_NAME=cdn-assets.marquee-cdn.net
         """
  
         operations = 0
