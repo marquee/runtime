@@ -20,4 +20,4 @@ app.config.from_object(settings)
 
 if settings.HYPERDRIVE:
 	from hyperdrive.main import hyperdrive
-	app.register_blueprint(hyperdrive, url_prefix="/hyperdrive")
+	app.register_blueprint(hyperdrive, url_prefix="/_hyperdrive")
